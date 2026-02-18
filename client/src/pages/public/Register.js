@@ -11,7 +11,11 @@ const Register = () => {
         const email = document.querySelector("#email").value;
         const password = document.querySelector("#password").value;
         const phone = document.querySelector("#phone").value;
-        console.log(role, full_name, email, password, phone);
+
+       
+        if(!role || !full_name || !email || !password || !phone) {
+            return Swal.fire("Error", "Please fill in all the required fields.", "error");
+        }else{ console.log(role, full_name, email, password, phone);}
 
         axios.post("http://localhost:1337/api/register",{
             role,
@@ -22,6 +26,7 @@ const Register = () => {
         }).then((res)=>{
             console.log(res);
             return Swal.fire("Success", "Your account has been created successfully!", "success");
+             
         }).catch((err)=>{
             console.error(err);
             return Swal.fire("Error", err.response?.data?.message || "An error occurred while creating your account. Please try again.", "error");

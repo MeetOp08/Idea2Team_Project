@@ -733,21 +733,49 @@
     color: var(--gray-900);
 }
 
-/* ── Post Project Form ── */
+/* ══════════════════════════════════════════════════════
+   POST PROJECT FORM — Premium Design
+   ══════════════════════════════════════════════════════ */
+
+/* ── Page Wrapper ── */
 .form-page {
-    max-width: 740px;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease;
 }
 
+/* ── Form Card ── */
 .form-card {
     background: white;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     border: 1px solid var(--gray-200);
-    padding: var(--space-8);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 1px 3px rgba(15, 23, 42, 0.04),
+        0 6px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* Gradient accent bar on top */
+.form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-accent);
+    z-index: 1;
 }
 
 .form-card h2 {
     font-size: var(--text-xl);
-    margin-bottom: var(--space-2);
+    font-weight: var(--weight-bold);
+    color: var(--gray-900);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--gray-100);
+    font-family: var(--font-heading);
 }
 
 .form-card>p {
@@ -756,23 +784,207 @@
     margin-bottom: var(--space-6);
 }
 
+/* ══════════════════════════════════
+   Form Sections
+   ══════════════════════════════════ */
+.form-section {
+    padding: var(--space-8);
+    border-bottom: 1px solid var(--gray-100);
+    transition: background-color var(--transition-base);
+}
+
+.form-section:hover {
+    background-color: rgba(248, 250, 252, 0.5);
+}
+
+.form-section-last {
+    border-bottom: none;
+}
+
+/* Section Header — icon + title side-by-side */
+.form-section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.form-section-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: var(--gradient-card);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    flex-shrink: 0;
+}
+
+.form-section-title {
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    color: var(--gray-900);
+    font-family: var(--font-heading);
+    margin: 0 0 2px 0;
+    line-height: 1.3;
+}
+
+.form-section-desc {
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+    line-height: var(--leading-normal);
+    margin: 0;
+}
+
+/* ══════════════════════════════════
+   Form Grid
+   ══════════════════════════════════ */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
+    gap: var(--space-5);
 }
 
 .form-grid .full-width {
     grid-column: 1 / -1;
 }
 
+/* ══════════════════════════════════
+   Labels
+   ══════════════════════════════════ */
+.form-card .form-label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--gray-700);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
+}
+
+/* ══════════════════════════════════
+   Inputs
+   NOTE: Use background-color (not background shorthand)
+         so it doesn't reset background-image/repeat on selects.
+   ══════════════════════════════════ */
+.form-card .form-input {
+    width: 100%;
+    background-color: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 11px var(--space-4);
+    font-size: var(--text-sm);
+    font-family: var(--font-body);
+    color: var(--gray-800);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-card .form-input:hover {
+    border-color: var(--gray-300);
+    background-color: white;
+}
+
+.form-card .form-input:focus {
+    background-color: white;
+    border-color: var(--primary-500);
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.08),
+        0 1px 2px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.form-card .form-input::placeholder {
+    color: var(--gray-400);
+    font-weight: var(--weight-normal);
+}
+
+/* ── Textarea ── */
+.form-card .form-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: var(--leading-relaxed);
+}
+
+/* ── Select ── */
+.form-card .form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-color: var(--gray-50);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%2394a3b8' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 40px;
+}
+
+.form-card .form-select:hover {
+    background-color: white;
+}
+
+.form-card .form-select:focus {
+    background-color: white;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%236366f1' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* ══════════════════════════════════
+   Input with Prefix (₹, $, etc.)
+   ══════════════════════════════════ */
+.form-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--gray-400);
+    pointer-events: none;
+    z-index: 1;
+    transition: color 0.2s ease;
+}
+
+.form-input-wrapper:focus-within .form-input-prefix {
+    color: var(--primary-500);
+}
+
+.form-input-with-prefix {
+    padding-left: 32px !important;
+}
+
+/* ══════════════════════════════════
+   Helper Text
+   ══════════════════════════════════ */
+.form-card .form-helper {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    margin-top: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    line-height: var(--leading-normal);
+}
+
+/* ══════════════════════════════════
+   Action Buttons
+   ══════════════════════════════════ */
 .form-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: var(--space-3);
-    margin-top: var(--space-6);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--gray-200);
+    padding: var(--space-6) var(--space-8);
+    background-color: var(--gray-50);
+    border-top: 1px solid var(--gray-100);
 }
 
 /* ── Admin Reports ── */
