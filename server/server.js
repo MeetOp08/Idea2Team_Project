@@ -80,13 +80,29 @@ app.get("/api/Manage-Users",(req,res)=>{
             })
         } else {    
             res.status(200).json({
-                message: "Users fetched successfully!",
+                message: "Users data fetched successfully!",
                 data: result
             });
         }
     }) 
 
 })
+app.get("/api/manage-project", (req, res) => {
+    const query = "SELECT * FROM projects";
+
+    db.query(query, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ message: "Error fetching projects" });
+        }
+
+        res.status(200).json({
+            message: "Projects fetched successfully",
+            data: result
+        });
+    });
+});
+
 app.post("/api/post-project", (req, res) => {
     console.log("Received project data:", req.body);
     const { title,

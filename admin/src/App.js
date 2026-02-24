@@ -15,6 +15,7 @@ import ManageUsers from './pages/admin/ManageUsers';
 import AdminManageProjects from './pages/admin/AdminManageProjects';
 import Reports from './pages/admin/Reports';
 
+
 function App() {
   return (
     <Router>
@@ -29,7 +30,9 @@ function App() {
         <Route path="/projects" element={<AdminManageProjects />} />
         <Route path="/reports" element={<Reports />} />
       </Routes>
+      
     </Router>
+    
   );
 }
 

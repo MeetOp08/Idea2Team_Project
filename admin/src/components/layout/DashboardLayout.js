@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import Footer from './Footer';
+import '../../styles/layout.css';
+
 
 const DashboardLayout = ({ role = 'founder', children }) => {
     const [collapsed, setCollapsed] = useState(false);
@@ -14,9 +17,12 @@ const DashboardLayout = ({ role = 'founder', children }) => {
                 <Topbar collapsed={collapsed} onToggle={toggleSidebar} />
                 <main className="dashboard-content">
                     {children}
+                    
                 </main>
+                <Footer/> 
             </div>
         </div>
+       
     );
 };
 

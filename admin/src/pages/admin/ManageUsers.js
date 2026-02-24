@@ -16,20 +16,21 @@ const ManageUsers = () => {
     })
     .catch(error => {
         console.error(error);
-    });
+    })
 })
 
 
  const handleView = (id) => {
   const user = users.find(user => user.user_id === id);
   if (user) {
-    console.log("Users Details:","\nUser id:", id,
+    alert("Users Details: \nUser id: " + id + "\nFull Name: " + user.full_name + "\nRole: " + user.role + "\nEmail: " + user.email + "\nPassword: " + user.password + "\nPhone: " + user.phone);
+  }
+  console.log("Users Details:","\nUser id:", id,
                                  "\nFull Name:", user.full_name, 
                                  "\nRole:", user.role, 
                                  "\nEmail:", user.email, 
                                  "\nPassword:", user.password,
                                  "\nPhone:", user.phone);
-  }
 };
 
 const handleWarning = (id) => {
@@ -81,6 +82,7 @@ const handleDelete = (id) => {
                             <th>Role</th>
                             <th>Phone No</th>
                             <th>Actions</th>
+                        
                         </tr>
                     </thead>
                     <tbody>
@@ -94,7 +96,7 @@ const handleDelete = (id) => {
                                 <td>{val.phone}</td>
                                 <td>
                                     <button className="action-btn view" onClick={()=>{handleView(val.user_id)}}>View</button>
-                                    <button className="action-btn edit" onClick={()=>{handleWarning(val.user_id)}}>Warning</button>
+                                    <button className="action-btn warn" onClick={()=>{handleWarning(val.user_id)}}>Warning</button>
                                     <button className="action-btn delete" onClick={()=>{handleDelete(val.user_id)}}>Delete</button>
                                 </td>
                             </tr>

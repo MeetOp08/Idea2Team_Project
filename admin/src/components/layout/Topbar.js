@@ -7,10 +7,7 @@ const Topbar = ({ collapsed = false, onToggle }) => {
                 <button className="topbar-toggle" onClick={onToggle}>
                     ☰
                 </button>
-                <div className="topbar-search">
-                    <span className="topbar-search-icon">🔍</span>
-                    <input type="text" placeholder="Search projects, users, tasks..." />
-                </div>
+          
             </div>
 
             <div className="topbar-right">

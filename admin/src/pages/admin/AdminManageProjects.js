@@ -1,14 +1,80 @@
-import React from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import DataTable from '../../components/tables/DataTable';
-import StatusBadge from '../../components/common/StatusBadge';
-import Button from '../../components/common/Button';
+import { useState, useEffect } from 'react';
+import axios from "axios";
+import '../../styles/ManageProjects.css';
 import SearchBar from '../../components/common/SearchBar';
-import { projects } from '../../data/dummyData';
 
 const AdminManageProjects = () => {
+
+    const [projects, setProjects] = useState([]);
+
+    // ✅ Fetch projects only once
+    useEffect(() => {
+        axios.get("http://localhost:1337/api/manage-project")
+            .then(response => {
+                setProjects(response.data.data);
+            })
+            .catch(error => {
+                console.error("Error fetching projects:", error);
+            });
+    }, []); // ✅ IMPORTANT
+
+    // ✅ View Project
+    const handleView = (id) => {
+        const project = projects.find(p => p.project_id === id);
+
+        if (project) {
+            alert(
+`Project Details:
+
+Project ID: ${project.project_id}
+Title: ${project.title}
+Description: ${project.description}
+Category: ${project.category}
+Required Skills: ${project.required_skills}
+Budget: ${project.budget_min} - ${project.budget_max}
+Duration: ${project.duration_weeks} weeks
+`
+            );
+}
+
+        console.log("Project Details:", "\nProject ID:", id,
+            "\nTitle:", project.title,
+            "\nDescription:", project.description,
+            "\nCategory:", project.category,
+            "\nRequired Skills:", project.required_skills,
+            "\nBudget:", project.budget_min, "-", project.budget_max,
+            "\nDuration:", project.duration_weeks, "weeks"
+        );
+    };
+
+
+    // ✅ Send Warning
+    const handleWarning = (id) => {
+        const warningMessage = prompt("Enter warning message:");
+
+        if (warningMessage) {
+            alert(`Warning sent to project ID: ${id}\nMessage: ${warningMessage}`);
+        }
+        console.log(`Warning sent to project ID: ${id}\nMessage: ${warningMessage}`);
+    };
+
+    // ✅ Delete Project
+    const handleDelete = (id) => {
+        if (window.confirm("Are you sure you want to delete this project?")) {
+
+            axios.delete(`http://localhost:1337/api/projects/${id}`)
+                .then(() => {
+                    // remove from UI instantly
+                    setProjects(projects.filter(project => project.project_id !== id));
+                })
+                .catch(err => console.log(err));
+        }
+    };
+
     return (
         <DashboardLayout role="admin">
+
             <div className="page-header">
                 <div>
                     <h1>Manage Projects</h1>
@@ -25,32 +91,57 @@ const AdminManageProjects = () => {
                 </div>
             </div>
 
-            <DataTable
-                columns={['Project', 'Founder', 'Category', 'Budget', 'Status', 'Applications', 'Actions']}
-                data={projects}
-                renderRow={(project, i) => (
-                    <tr key={i}>
-                        <td>
-                            <div>
-                                <p style={{ fontWeight: '600', color: 'var(--gray-900)' }}>{project.title}</p>
-                                <p style={{ fontSize: '12px', color: 'var(--gray-500)' }}>{project.company}</p>
-                            </div>
-                        </td>
-                        <td>{project.founder}</td>
-                        <td><span className="badge badge-info">{project.category}</span></td>
-                        <td style={{ fontWeight: '600' }}>{project.budget}</td>
-                        <td><StatusBadge status={project.status} /></td>
-                        <td>{project.applications}</td>
-                        <td>
-                            <div className="table-actions">
-                                <Button variant="ghost" size="sm">View</Button>
-                                <Button variant="outline" size="sm">Edit</Button>
-                                <Button variant="danger" size="sm">Remove</Button>
-                            </div>
-                        </td>
-                    </tr>
-                )}
-            />
+            <div className="table">
+                <table className="project-table">
+                    <thead>
+                        <tr>
+                            <th>Index</th>
+                            <th>Project Title</th>
+                            <th>description</th>
+                            <th>Category</th>
+                            <th>Required Skills</th>
+                            <th>Budget</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+  {projects.length > 0 ? (
+    projects.map((val, index) => (
+      <tr key={val.project_id}>
+        <td>{index + 1}</td>
+        <td>{val.title}</td>
+        <td>{val.description}</td>
+        <td>{val.category}</td>
+        <td>{val.required_skills}</td>
+        <td>{val.budget_min} - {val.budget_max}</td>
+        <td>
+          <button className="action-btn view"
+            onClick={() => handleView(val.project_id)}>
+            View
+          </button>
+          <button className="action-btn warn"
+            onClick={() => handleWarning(val.project_id)}>
+            Warning
+          </button>
+          <button className="action-btn delete"
+            onClick={() => handleDelete(val.project_id)}>
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
+        No Projects Found
+      </td>
+    </tr>
+  )}
+</tbody>
+                </table>
+            </div>
+
         </DashboardLayout>
     );
 };
