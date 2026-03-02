@@ -6,28 +6,28 @@ import Swal from 'sweetalert2';
 
 const Register = () => {
     function handleSubmit() {
-        const role = document.querySelector("#role").value;
+        const role = document.querySelector('input[name="role"]:checked')?.value;
         const full_name = document.querySelector("#full_name").value;
         const email = document.querySelector("#email").value;
         const password = document.querySelector("#password").value;
         const phone = document.querySelector("#phone").value;
 
-       
-        if(!role || !full_name || !email || !password || !phone) {
-            return Swal.fire("Error", "Please fill in all the required fields.", "error");
-        }else{ console.log(role, full_name, email, password, phone);}
 
-        axios.post("http://localhost:1337/api/register",{
+        if (!role || !full_name || !email || !password || !phone) {
+            return Swal.fire("Error", "Please fill in all the required fields.", "error");
+        } else { console.log(role, full_name, email, password, phone); }
+
+        axios.post("http://localhost:1337/api/register", {
             role,
             full_name,
             email,
             password,
             phone
-        }).then((res)=>{
+        }).then((res) => {
             console.log(res);
             return Swal.fire("Success", "Your account has been created successfully!", "success");
-             
-        }).catch((err)=>{
+
+        }).catch((err) => {
             console.error(err);
             return Swal.fire("Error", err.response?.data?.message || "An error occurred while creating your account. Please try again.", "error");
         })
@@ -56,13 +56,13 @@ const Register = () => {
                     {/* Role Selector */}
                     <div className="role-selector">
                         <label className="role-option">
-                            <input id="role" type="radio" name="role" value="founder" defaultChecked />
+                            <input type="radio" name="role" value="founder" defaultChecked />
                             <div className="role-option-icon">🏢</div>
                             <div className="role-option-label">I'm a Founder</div>
                             <p style={{ fontSize: '12px', color: 'var(--gray-500)', marginTop: '4px' }}>Post projects & hire talent</p>
                         </label>
                         <label className="role-option">
-                            <input id="role" type="radio" name="role" value="freelancer" />
+                            <input type="radio" name="role" value="freelancer" />
                             <div className="role-option-icon">💻</div>
                             <div className="role-option-label">I'm a Freelancer</div>
                             <p style={{ fontSize: '12px', color: 'var(--gray-500)', marginTop: '4px' }}>Find projects & earn money</p>

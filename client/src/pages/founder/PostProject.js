@@ -25,7 +25,11 @@ const PostProject = () => {
             return Swal.fire("Error", "Please fill all the fields", "error");
         }
 
+        const founder_id = localStorage.getItem("user_id");
+        
         axios.post("http://localhost:1337/api/post-project", {
+            
+            founder_id,
             title,
             description,
             category,

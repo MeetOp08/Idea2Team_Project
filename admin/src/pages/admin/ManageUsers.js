@@ -16,41 +16,29 @@ const ManageUsers = () => {
     })
     .catch(error => {
         console.error(error);
-    })
-})
+    });
+},[])
 
 
- const handleView = (id) => {
-  const user = users.find(user => user.user_id === id);
-  if (user) {
-    alert("Users Details: \nUser id: " + id + "\nFull Name: " + user.full_name + "\nRole: " + user.role + "\nEmail: " + user.email + "\nPassword: " + user.password + "\nPhone: " + user.phone);
-  }
-  console.log("Users Details:","\nUser id:", id,
-                                 "\nFull Name:", user.full_name, 
-                                 "\nRole:", user.role, 
-                                 "\nEmail:", user.email, 
-                                 "\nPassword:", user.password,
-                                 "\nPhone:", user.phone);
+
+
+const handleBlock = (id) => {
+    axios.put(`http://localhost:1337/api/block-user/${id}`)
+        .then(() => {
+            setUsers(prevUsers =>
+                prevUsers.map(user =>
+                    user.user_id === id
+                        ? {     
+                            ...user, 
+                            status: user.status === "active" ? "blocked" : "active" 
+                          }
+                        : user
+                )
+            );
+        })
+        .catch(err => console.log(err));
 };
 
-const handleWarning = (id) => {
-    const warningMessage = prompt("Enter warning message:");
-    if (warningMessage) {
-        alert(`Warning sent to user with id: ${id}\nMessage: ${warningMessage}`);
-    }
-    console.log(`Warning sent to user with id: ${id}\nMessage: ${warningMessage}`);
-
-}
-
-const handleDelete = (id) => {
-  if (window.confirm("Are you sure you want to delete?")) {
-    axios.delete(`/api/users/${id}`)
-      .then(() => {
-        setUsers(users.filter(user => user.user_id !== id));
-      })
-      .catch(err => console.log(err));
-  }
-};
     return (
         <DashboardLayout role="admin">
             <div className="page-header">
@@ -82,7 +70,7 @@ const handleDelete = (id) => {
                             <th>Role</th>
                             <th>Phone No</th>
                             <th>Actions</th>
-                        
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,10 +83,12 @@ const handleDelete = (id) => {
                                 <td>{val.role}</td>
                                 <td>{val.phone}</td>
                                 <td>
-                                    <button className="action-btn view" onClick={()=>{handleView(val.user_id)}}>View</button>
-                                    <button className="action-btn warn" onClick={()=>{handleWarning(val.user_id)}}>Warning</button>
-                                    <button className="action-btn delete" onClick={()=>{handleDelete(val.user_id)}}>Delete</button>
+                                   
+                                    <button className="action-btn delete" onClick={()=>{handleBlock(val.user_id)}}>{
+                                    val.status  === "active" ? "Block" : "Unblock"
+                                    }</button>
                                 </td>
+                                <td>{val.status}</td>
                             </tr>
                        ))}
                     </tbody>
@@ -108,4 +98,4 @@ const handleDelete = (id) => {
     );
 };
 
-export default ManageUsers;
+export default ManageUsers; 

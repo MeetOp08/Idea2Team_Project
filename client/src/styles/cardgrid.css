@@ -1,0 +1,50 @@
+.projects-container{
+    display:"grid";  
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    gap:20px;
+    padding:20px;
+}
+.project-card{
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.project-card:hover{
+    transform: translateY(-5px);
+}
+.status{
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.status.Pending{
+    background:#fff3cd;
+}
+
+.status.Approved{
+    background:#d4edda;
+}
+
+.status.Rejected{
+    background:#f8d7da;
+}
+.card-actions{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+}
+
+.card-actions button{
+    flex:1;
+    padding:8px;
+    border:none;
+    background:#007bff;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}

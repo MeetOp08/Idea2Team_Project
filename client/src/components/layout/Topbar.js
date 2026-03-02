@@ -21,10 +21,11 @@ const Topbar = ({ collapsed = false, onToggle }) => {
                 <button className="topbar-icon-btn">
                     💬
                 </button>
-                <div className="topbar-user">
-                    <div className="topbar-avatar">AM</div>
-                    <span className="topbar-user-name">Alex Morgan</span>
-                </div>
+               <div className = "logout">
+                <button className="topbar-icon-btn" style={{color:"black", borderRadius:"2px", padding:"4px 8px",cursor:"pointer",fontWeight:"600",fontSize:"14px", width:"100%"}} >
+                    Logout
+                </button>
+               </div>
             </div>
         </header>
     );

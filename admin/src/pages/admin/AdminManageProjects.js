@@ -59,19 +59,23 @@ Duration: ${project.duration_weeks} weeks
         console.log(`Warning sent to project ID: ${id}\nMessage: ${warningMessage}`);
     };
 
-    // ✅ Delete Project
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this project?")) {
-
-            axios.delete(`http://localhost:1337/api/projects/${id}`)
-                .then(() => {
-                    // remove from UI instantly
-                    setProjects(projects.filter(project => project.project_id !== id));
-                })
-                .catch(err => console.log(err));
-        }
-    };
-
+    // ✅ Block Project
+const handleStatus = (id) => {
+    axios.put(`http://localhost:1337/api/status-project/${id}`)
+        .then(() => {
+            setProjects(prevProjects =>
+                prevProjects.map(project =>
+                    project.project_id === id
+                        ? {     
+                            ...project, 
+                            status: project.status === "active" ? "closed" : "active" 
+                          }
+                        : project
+                )
+            );
+        })
+        .catch(err => console.log(err));
+};
     return (
         <DashboardLayout role="admin">
 
@@ -102,6 +106,7 @@ Duration: ${project.duration_weeks} weeks
                             <th>Required Skills</th>
                             <th>Budget</th>
                             <th>Actions</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
 
@@ -115,20 +120,18 @@ Duration: ${project.duration_weeks} weeks
         <td>{val.category}</td>
         <td>{val.required_skills}</td>
         <td>{val.budget_min} - {val.budget_max}</td>
-        <td>
+        <td className="btns">
           <button className="action-btn view"
             onClick={() => handleView(val.project_id)}>
             View
           </button>
-          <button className="action-btn warn"
-            onClick={() => handleWarning(val.project_id)}>
-            Warning
-          </button>
-          <button className="action-btn delete"
-            onClick={() => handleDelete(val.project_id)}>
-            Delete
-          </button>
-        </td>
+          
+          <button className="action-btn status"
+            onClick={()=>{handleStatus(val.project_id)}}>{
+              val.status  === "active" ? "closed" : "active"
+            }</button>
+            </td>
+            <td>{val.status}</td>
       </tr>
     ))
   ) : (

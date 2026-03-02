@@ -13,18 +13,30 @@ const Login = () => {
             email,
             password
         }).then((res) => {
-            console.log(res);
+
+            // ✅ SAVE LOGIN DATA
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+            localStorage.setItem("user_id", res.data.user.user_id);
+            localStorage.setItem("role", res.data.user.role);
+
             Swal.fire("Success", "Login successful!", "success");
-            // Redirect based on role
-            const role = res.data?.user?.role;
-            if (role === 'founder') {
+
+            if (res.data.user.role === "founder") {
                 window.location.href = "/founder/dashboard";
             } else {
                 window.location.href = "/freelancer/dashboard";
             }
         }).catch((err) => {
             console.error(err);
-            Swal.fire("Error", err.response?.data?.message || "Invalid credentials. Please try again.", "error");
+            if (err.response?.status === 403) {
+                Swal.fire({
+                    html: `Your account has been blocked. Please contact support.<br><a href="/help" style="color: var(--primary-600); font-weight:bold;">Help & Center</a>`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire("Error", err.response?.data?.message || "An error occurred during login. Please try again.", "error");
+            }
         });
     }
 
@@ -61,7 +73,7 @@ const Login = () => {
                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--gray-600)', cursor: 'pointer' }}>
                             <input type="checkbox" /> Remember me
                         </label>
-                        <a href="#forgot" style={{ fontSize: '14px', color: 'var(--primary-600)', fontWeight: '600' }}>Forgot password?</a>
+                        <a href="/forgot-password" style={{ fontSize: '14px', color: 'var(--primary-600)', fontWeight: '600' }}>Forgot password?</a>
                     </div>
                     <Button variant="primary" size="lg" style={{ width: '100%' }} onClick={handleLogin}>Sign In</Button>
 

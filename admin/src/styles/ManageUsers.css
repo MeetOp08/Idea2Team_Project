@@ -86,7 +86,7 @@
 }
 
 .user-table thead {
-    background-color: #f9fafb;
+    background-color: #000000;
 }
 
 .user-table th {
@@ -94,10 +94,8 @@
     padding: 14px;
     font-size: 13px;
     font-weight: 600;
-    color: #374151;
-    border-bottom: 1px solid #e5e7eb;
-}
-
+    color: #ffffff;
+}   
 .user-table td {
     padding: 14px;
     font-size: 14px;
@@ -135,14 +133,7 @@
 }
 
 /* VIEW BUTTON */
-.action-btn.view {
-    background: transparent;
-    color: #2563eb;
-}
 
-.action-btn.view:hover {
-    text-decoration: underline;
-}
 
 /* EDIT BUTTON */
 .action-btn.warn {

@@ -1,0 +1,124 @@
+/* ====================================
+   PAGE CONTAINER
+==================================== */
+
+.edit-project-container {
+    max-width: 850px;
+    margin: 30px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+}
+
+/* ====================================
+   PAGE TITLE
+==================================== */
+
+.edit-project-container h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 25px;
+}
+
+
+/* ====================================
+   FORM LAYOUT
+==================================== */
+
+.edit-project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+/* ====================================
+   LABEL
+==================================== */
+
+.edit-project-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+
+/* ====================================
+   INPUTS
+==================================== */
+
+.edit-project-form input,
+.edit-project-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s ease;
+    background: #fafafa;
+}
+
+.edit-project-form textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+/* Focus Effect */
+
+.edit-project-form input:focus,
+.edit-project-form textarea:focus {
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+
+/* ====================================
+   UPDATE BUTTON
+==================================== */
+
+.update-btn {
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Hover */
+
+.update-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(79,70,229,0.25);
+}
+
+/* Click */
+
+.update-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* ====================================
+   RESPONSIVE
+==================================== */
+
+@media (max-width:768px){
+
+    .edit-project-container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .edit-project-container h2 {
+        font-size: 22px;
+    }
+}
