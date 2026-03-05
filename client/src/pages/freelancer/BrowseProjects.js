@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-import ProjectCard from '../../components/cards/ProjectCard';
 import SearchBar from '../../components/common/SearchBar';
-import { projects, categories } from '../../data/dummyData';
+import axios from 'axios';
 
 const BrowseProjects = () => {
     const [activeCategory, setActiveCategory] = useState('All');
+    const [projects, setProjects] = useState([]);
 
-    const filteredProjects = activeCategory === 'All'
-        ? projects
-        : projects.filter(p => p.category === activeCategory);
+ useEffect(()=>{
+  axios.get("http://localhost:1337/api/projects")
+  .then(res => {
+      console.log(res.data)
+      setProjects(res.data.data)
+  })
+  .catch(err => console.log(err))
+}, [])
+    
+  const handleView = () =>{
+    
+  }
+  const handleApply = () =>{
+
+  }
+
 
     return (
         <DashboardLayout role="freelancer">
@@ -22,38 +35,41 @@ const BrowseProjects = () => {
 
             <div className="filter-bar">
                 <SearchBar placeholder="Search projects by title, skill, or company..." style={{ flex: 1 }} />
-                <select className="form-input form-select" style={{ marginBottom: 0, minWidth: '180px' }}>
-                    <option value="">Budget Range</option>
-                    {['Any Budget', 'Under $5,000', '$5,000 - $10,000', '$10,000 - $20,000', 'Over $20,000'].map((opt, i) => (
-                        <option key={i} value={opt}>{opt}</option>
-                    ))}
-                </select>
             </div>
-
-            <div className="filter-chips" style={{ marginBottom: '24px' }}>
-                {categories.map(cat => (
-                    <button
-                        key={cat}
-                        className={`filter-chip ${activeCategory === cat ? 'active' : ''}`}
-                        onClick={() => setActiveCategory(cat)}
-                    >
-                        {cat}
-                    </button>
-                ))}
+            <div className="table">
+                <table className="project-list">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <th>Project Title</th>
+                            <th>description</th>
+                            <th>founder Name</th>
+                            <th>Require_skills</th>
+                            <th>budget</th>
+                            <th>duration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                  <tbody>
+                        {Array.isArray(projects) && projects.map((val,index)=>(
+                        <tr key={val.project_id}>
+                            <td>{index + 1}</td>
+                            <td>{val.title}</td>
+                            <td>{val.description}</td>
+                            <td>{val.founder_name}</td>
+                            <td>{val.required_skills}</td>
+                            <td>{val.budget_min}-{val.budget_max}</td>
+                            <td>{val.duration_weeks} Weeks</td>
+                            <td>
+                                <button className="action-btn view" onClick={handleView}>View</button>
+                                <button className="action-btn apply" onClick={handleApply}>Apply</button>
+                            </td>
+                        </tr>
+                        ))}
+                        </tbody>
+                </table>
             </div>
-
-            <div className="projects-grid">
-                {filteredProjects.map(project => (
-                    <ProjectCard key={project.id} project={project} />
-                ))}
-            </div>
-
-            {filteredProjects.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '48px', marginBottom: '12px' }}>🔍</p>
-                    <p>No projects found in this category. Try a different filter.</p>
-                </div>
-            )}
+           
         </DashboardLayout>
     );
 };

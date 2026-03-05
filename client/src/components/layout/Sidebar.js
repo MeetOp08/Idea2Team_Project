@@ -87,10 +87,10 @@ const Sidebar = ({ role = 'founder', collapsed = false, onToggle }) => {
 
     return (
         <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-            <div className="sidebar-header">
-                <div className="sidebar-logo">I2</div>
-                <span className="sidebar-brand-text">Idea2Team</span>
-            </div>
+            <div className="toggle"></div>
+           <button className="sidebar-toggle" onClick={onToggle}>
+                    ☰
+                </button>
 
             <nav className="sidebar-nav">
                 {menu.sections.map((section, si) => (

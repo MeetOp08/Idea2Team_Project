@@ -211,36 +211,6 @@
     width: var(--sidebar-collapsed);
 }
 
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-6);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    min-height: var(--topbar-height);
-}
-
-.sidebar-logo {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: var(--weight-extrabold);
-    font-size: var(--text-lg);
-}
-
-.sidebar-brand-text {
-    font-family: var(--font-heading);
-    font-size: var(--text-lg);
-    font-weight: var(--weight-bold);
-    white-space: nowrap;
-    opacity: 1;
-    transition: opacity var(--transition-fast);
-}
 
 .sidebar.collapsed .sidebar-brand-text {
     opacity: 0;
@@ -270,6 +240,24 @@
 .sidebar.collapsed .sidebar-section-label {
     text-align: center;
     font-size: 0;
+}
+
+.sidebar-toggle {
+    width: 100%;
+    height: 40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius: var(--radius-md);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: var(--text-lg);
+}
+
+.sidebar-toggle:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
 }
 
 .sidebar-item {
@@ -402,23 +390,6 @@
     gap: var(--space-4);
 }
 
-.topbar-toggle {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: var(--text-lg);
-}
-
-.topbar-toggle:hover {
-    background: var(--gray-100);
-    color: var(--gray-900);
-}
 
 .topbar-search {
     display: flex;
@@ -503,6 +474,39 @@
 
 .topbar-user:hover {
     background: var(--gray-100);
+}
+.topbar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: var(--topbar-height);
+}
+
+.topbar-logo {
+    width: 36px;
+    height: 36px;
+    color:white;
+    min-width: 36px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    cursor:pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--weight-extrabold);
+    font-size: var(--text-lg);
+}
+
+.topbar-brand-text {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    white-space: nowrap;
+    opacity: 1;
+    cursor:pointer;
+    transition: opacity var(--transition-fast);
 }
 
 .topbar-avatar {

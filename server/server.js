@@ -265,6 +265,32 @@ app.get("/api/editproject/:id", (req, res) => {
         });
     });
 });
+app.get("/api/projects", (req, res) => {
+
+    const query = `
+        SELECT projects.*, users.full_name AS founder_name
+        FROM projects
+        JOIN users ON projects.founder_id = users.user_id WHERE projects.status = 'active'
+    `;
+
+    db.query(query, (err, result) => {
+
+        if (err) {
+            console.log(err);
+
+            return res.status(500).json({
+                message: "Error during fetching data."
+            });
+        }
+
+        res.json({
+            message: "Successfully data fetched.",
+            data: result
+        });
+
+    });
+
+});
 app.put("/api/block-user/:id", (req, res) => {
 
     const userId = req.params.id;

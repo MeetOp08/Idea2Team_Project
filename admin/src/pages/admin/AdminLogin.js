@@ -1,9 +1,12 @@
 import React from 'react';
 import Button from '../../components/common/Button';
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2'; 
+import {useState} from 'react';
 
 const AdminLogin = () => {
+  const[showPassword, setShowPassword] = useState(false);
+
     function handleLogin() {
         const email = document.querySelector("#email").value;
         const password = document.querySelector("#password").value;
@@ -55,7 +58,10 @@ const AdminLogin = () => {
                     </div>
                     <div className="form-group">
                         <label className="form-label">Password</label>
-                        <input id="password" type="password" className="form-input" placeholder="Enter admin password" />
+                        <input id="password" type={showPassword ? "text" : "password"} className="form-input" placeholder="Enter admin password" />
+                        <span   onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right:'200px',marginTop: '12px', cursor: 'pointer', color: "blue",fontSize: '14px', fontWeight: 'bold' }}>
+                            {showPassword ? "Hide" : "Show"}
+                        </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--gray-600)', cursor: 'pointer' }}>

@@ -1,16 +1,26 @@
 import React from 'react';
+import Dashboard from '../layout/DashboardLayout';
+import {Link} from "react-router-dom";
 
 const Topbar = ({ collapsed = false, onToggle }) => {
+    const role = localStorage.getItem("role");
     return (
         <header className={`topbar ${collapsed ? 'sidebar-collapsed' : ''}`}>
             <div className="topbar-left">
-                <button className="topbar-toggle" onClick={onToggle}>
-                    ☰
-                </button>
-                <div className="topbar-search">
+                
+                 <div className="topbar-header">
+                <div className="topbar-logo">I2</div>
+               <Link 
+  to={role === "founder" ? "/founder/dashboard" : "/freelancer/dashboard"} 
+  className="topbar-brand-text"
+>
+  Idea2Team
+</Link>
+            </div>
+                {/* <div className="topbar-search">
                     <span className="topbar-search-icon">🔍</span>
                     <input type="text" placeholder="Search projects, users, tasks..." />
-                </div>
+                </div> */}
             </div>
 
             <div className="topbar-right">
