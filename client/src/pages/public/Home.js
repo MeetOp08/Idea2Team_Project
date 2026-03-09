@@ -50,20 +50,7 @@ const Home = () => {
                                 </Button>
                             </Link>
                         </div>
-                        <div className="hero-stats">
-                            <div className="hero-stat">
-                                <p className="hero-stat-value">2,500+</p>
-                                <p className="hero-stat-label">Freelancers</p>
-                            </div>
-                            <div className="hero-stat">
-                                <p className="hero-stat-value">850+</p>
-                                <p className="hero-stat-label">Projects Launched</p>
-                            </div>
-                            <div className="hero-stat">
-                                <p className="hero-stat-value">$2.4M+</p>
-                                <p className="hero-stat-label">Paid to Freelancers</p>
-                            </div>
-                        </div>
+                     
                     </div>
 
                     <div className="hero-visual">

@@ -32,12 +32,18 @@ app.post("/api/admin-login", (req, res) => {
     console.log("Admin Password:", password);
 
     const query = "SELECT * FROM admin WHERE email = ? AND password = ?";
-    const admin_id = 1;
-    db.query(`${query}`, [admin_id, email, password], (err, results) => {
+    db.query(query, [email, password], (err, results) => {
         if (email === "patelmeet52271@gmail.com" && password === "Meet@0811P_") {
             return res.json({
                 message: "Admin Login Successful",
-                email: email
+                email: email,
+                admin_id: 1
+            });
+        } else if (results && results.length > 0) {
+            return res.json({
+                message: "Admin Login Successful",
+                email: email,
+                admin_id: results[0].admin_id
             });
         } else {
             return res.json({

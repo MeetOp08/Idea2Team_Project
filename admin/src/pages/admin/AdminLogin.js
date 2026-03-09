@@ -19,12 +19,17 @@ const AdminLogin = () => {
             email,
             password
         }).then((res) => {
-            console.log(res);
-            Swal.fire("Success", "Welcome back, Admin!", "success");
-            window.location.href = "/dashboard";
+            if (res.data.message === "Admin Login Successful") {
+                localStorage.setItem("admin_id", res.data.admin_id || "1");
+                localStorage.setItem("role", "admin");
+                Swal.fire("Success", "Welcome back, Admin!", "success").then(() => {
+                    window.location.href = "/dashboard";
+                });
+            } else {
+                Swal.fire("Error", res.data.message || "Invalid admin credentials.", "error");
+            }
         }).catch((err) => {
-            
-            Swal.fire("Error","Invalid admin credentials.", "error");
+            Swal.fire("Error", "Invalid admin credentials.", "error");
         });
     }
 

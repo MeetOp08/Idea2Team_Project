@@ -38,7 +38,7 @@ const Sidebar = ({ role = "admin", collapsed = false, onToggle }) => {
 
         axios.get(`http://localhost:1337/api/admininfo/${adminId}`)
             .then(res => {
-                setUser(res.data.data);
+                setUser(res.data.data || {});
             })
             .catch(err => console.log(err));
 
