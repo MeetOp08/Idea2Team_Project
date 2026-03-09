@@ -441,6 +441,10 @@
     font-size: var(--text-sm);
 }
 
+.topbar-user:hover {
+    background: var(--gray-100);
+}
+
 .topbar-search input {
     background: none;
     border: none;
@@ -477,6 +481,15 @@
 .topbar-icon-btn:hover {
     background: var(--gray-100);
     color: var(--gray-700);
+}
+
+.topbar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: var(--topbar-height);
 }
 
 .topbar-badge {

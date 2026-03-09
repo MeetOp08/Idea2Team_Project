@@ -221,9 +221,26 @@ app.get("/api/Manage-Users", (req, res) => {
     })
 
 })
-app.get("/api/userinfo", (req, res) => {
-    const userId = req.headers["user-id"];
+app.get("/api/userinfo/:id", (req, res) => {
+    const userId = req.params.id;
     const query = `SELECT * FROM users WHERE user_id = ?`;
+    db.query(query, [userId], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                message: "An error occurred while fetching user info. Please try again."
+            });
+        } else {
+            res.status(200).json({
+                message: "User info fetched successfully!",
+                data: result[0]
+            });
+        }
+    });
+});
+app.get("/api/admininfo/:id", (req, res) => {
+    const userId = req.params.id;
+    const query = `SELECT * FROM admin WHERE admin_id = ?`;
     db.query(query, [userId], (err, result) => {
         if (err) {
             console.log(err);

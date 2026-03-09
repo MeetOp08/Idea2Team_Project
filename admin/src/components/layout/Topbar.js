@@ -1,30 +1,47 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
+import "../../styles/Topbar.css";
 
-const Topbar = ({ collapsed = false, onToggle }) => {
-    return (
-        <header className={`topbar ${collapsed ? 'sidebar-collapsed' : ''}`}>
-            <div className="topbar-left">
-                <button className="topbar-toggle" onClick={onToggle}>
-                    ☰
-                </button>
-          
-            </div>
+const Topbar = ({ collapsed = false }) => {
+  const role = localStorage.getItem("role");
 
-            <div className="topbar-right">
-                <button className="topbar-icon-btn">
-                    🔔
-                    <span className="topbar-badge"></span>
-                </button>
-                <button className="topbar-icon-btn">
-                    💬
-                </button>
-                <div className="topbar-user">
-                    <div className="topbar-avatar">MP</div>
-                    <span className="topbar-user-name">Meet Patel</span>
-                </div>
-            </div>
-        </header>
-    );
+  return (
+    <header className={`app-topbar ${collapsed ? "app-topbar-collapsed" : ""}`}>
+      
+      <div className="app-topbar-left">
+        
+        <div className="app-topbar-brand">
+          <div className="app-topbar-logo">I2</div>
+
+          <Link
+            to={role === "founder" ? "/founder/dashboard" : "/freelancer/dashboard"}
+            className="app-topbar-title"
+          >
+            Idea2Team
+          </Link>
+        </div>
+
+      </div>
+
+      <div className="app-topbar-right">
+
+        <button className="app-topbar-btn">
+          🔔
+          <span className="app-topbar-dot"></span>
+        </button>
+
+        <button className="app-topbar-btn">
+          💬
+        </button>
+
+        <button className="app-topbar-logout">
+          Logout
+        </button>
+
+      </div>
+
+    </header>
+  );
 };
 
 export default Topbar;
