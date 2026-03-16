@@ -368,33 +368,6 @@ app.get("/api/projects", (req, res) => {
     });
 
 });
-app.get("/api/founder-applications/:founderId", (req, res) => {
-
-    const founderId = req.params.founderId;
-
-    const query = `
-        SELECT applications.*, users.full_name, projects.title as project_title
-        FROM applications
-        JOIN users ON applications.freelancer_id = users.user_id
-        JOIN projects ON applications.project_id = projects.project_id
-        WHERE projects.founder_id = ?
-    `;
-
-    db.query(query, [founderId], (err, result) => {
-
-        if (err) {
-            console.log(err);
-             return res.status(500).json({
-                message: "Error fetching applications"
-            });
-        }
-
-        res.json({
-            success: true,
-            data: result
-        });
-    });
-});
 app.get("/api/info-projects/:id",(req,res)=>{
     const project_id = req.params.id;
     console.log("Project_Id:",project_id);
@@ -409,6 +382,26 @@ app.get("/api/info-projects/:id",(req,res)=>{
             data:result[0]
         })
     })
+})
+app.get("/api/info-application/:founder_id",(req,res)=>{
+      const founder_id = req.params.founderId;
+        console.log("founderId:",founder_id);
+    const query = `SELECT * FROM applications WHERE project_id=19`;
+
+    db.query(query, [founder_id], (err, result) => {
+
+        if (err) {
+            console.log(err);
+             return res.status(500).json({
+                message: "Error fetching applications"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: result
+        });
+    });
 })
 app.put("/api/block-user/:id", (req, res) => {
 

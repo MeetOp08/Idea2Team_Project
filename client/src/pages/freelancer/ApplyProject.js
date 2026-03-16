@@ -7,7 +7,6 @@ import Button from '../../components/common/Button';
 function ApplyProject(){
     const {id} = useParams();
     const navigate = useNavigate();
-    console.log(id);
   const[project,setProject]=useState({});
   const[formData,setformData]=useState({
     proposal_message:"",
@@ -45,7 +44,7 @@ const handleSubmit = () => {
     expected_salary:""
   });
 
-  navigate("/browse-projects"); // redirect
+  navigate("/freelancer/browse"); // redirect
 })
   .catch(err=>console.log(err));
 

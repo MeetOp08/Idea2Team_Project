@@ -4,6 +4,10 @@ import {Link} from "react-router-dom";
 
 const Topbar = ({ collapsed = false, onToggle }) => {
     const role = localStorage.getItem("role");
+    const handleLogout=()=>{
+        localStorage.clear();
+        window.location.replace("/login");
+    }
     return (
         <header className={`topbar ${collapsed ? 'sidebar-collapsed' : ''}`}>
             <div className="topbar-left">
@@ -32,7 +36,7 @@ const Topbar = ({ collapsed = false, onToggle }) => {
                     💬
                 </button>
                <div className = "logout">
-                <button className="topbar-icon-btn" style={{color:"black", borderRadius:"2px", padding:"4px 8px",cursor:"pointer",fontWeight:"600",fontSize:"14px", width:"100%"}} >
+                <button className="topbar-icon-btn" style={{color:"black", borderRadius:"2px", padding:"4px 8px",cursor:"pointer",fontWeight:"600",fontSize:"14px", width:"100%"}}  onClick={handleLogout}>
                     Logout
                 </button>
                </div>
