@@ -1,4 +1,4 @@
-.btn {
+.Applications-scope .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -16,22 +16,22 @@
   line-height: 1;
 }
 
-.stats-card-icon.success {
+.Applications-scope .stats-card-icon.success {
   background: var(--success-50);
   color: var(--success-600);
 }
 
-.project-card-meta span {
+.Applications-scope .project-card-meta span {
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
 
-.data-table thead {
+.Applications-scope .data-table thead {
   background: var(--gray-50);
 }
 
-.data-table th {
+.Applications-scope .data-table th {
   padding: var(--space-3) var(--space-4);
   text-align: left;
   font-size: var(--text-xs);
@@ -42,43 +42,235 @@
   border-bottom: 1px solid var(--gray-200);
 }
 
-.data-table td {
+.Applications-scope .data-table td {
   padding: var(--space-4);
   font-size: var(--text-sm);
   color: var(--gray-700);
   border-bottom: 1px solid var(--gray-100);
 }
 
-.testimonial-author-info .name {
+.Applications-scope .testimonial-author-info .name {
   font-weight: var(--weight-semibold);
   color: var(--gray-900);
   font-size: var(--text-sm);
 }
 
-.testimonial-author-info .role {
+.Applications-scope .testimonial-author-info .role {
   font-size: var(--text-xs);
   color: var(--gray-500);
 }
 
-.page-header {
+.Applications-scope .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-8);
 }
 
-.page-header h1 {
+.Applications-scope .page-header h1 {
   font-size: var(--text-2xl);
 }
 
-.page-header p {
+.Applications-scope .page-header p {
   font-size: var(--text-sm);
   color: var(--gray-500);
   margin-top: var(--space-1);
 }
 
-.filter-chip.active {
+.Applications-scope .filter-chip.active {
   background: var(--primary-600);
   border-color: var(--primary-600);
   color: white;
+}
+
+/* --- Merged from application.css --- */
+
+/* ===== RESET ===== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== PAGE HEADER ===== */
+
+.Applications-scope .page-header {
+  padding: 20px 25px;
+}
+
+.Applications-scope .page-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.Applications-scope .page-header p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ===== CONTAINER ===== */
+
+.Applications-scope .Grid-Conatiner {
+  padding: 20px;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  min-height: 100vh;
+}
+
+/* ===== TABLE ===== */
+
+.Applications-scope .table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== HEADER ===== */
+
+.Applications-scope .table thead {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: #ffffff;
+}
+
+.Applications-scope .table th {
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* ===== BODY ===== */
+
+.Applications-scope .table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #1e293b;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ===== ROW ===== */
+
+.table tbody tr {
+  transition: 0.25s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(79, 70, 229, 0.05);
+}
+
+/* ===== TEXT CONTROL ===== */
+
+.Applications-scope .table td:nth-child(3),
+.Applications-scope .table td:nth-child(4) {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== STATUS ===== */
+
+.Applications-scope .status {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Status Colors */
+
+.Applications-scope .status.pending {
+  background: rgba(99, 102, 241, 0.15);
+  color: #4f46e5;
+}
+
+.Applications-scope .status.accepted {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.Applications-scope .status.rejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+/* ===== ACTION GROUP ===== */
+
+.Applications-scope .action-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== BUTTON BASE ===== */
+
+.Applications-scope .btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Accept */
+
+.Applications-scope .btn-accept {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+}
+
+.Applications-scope .btn-accept:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Reject */
+
+.Applications-scope .btn-reject {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+}
+
+.Applications-scope .btn-reject:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Active (Accepted/Rejected state) */
+
+.Applications-scope .btn.active {
+  opacity: 0.85;
+  cursor: default;
+}
+
+/* Disabled */
+
+.Applications-scope button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .Applications-scope .Grid-Conatiner {
+    padding: 10px;
+  }
+
+  .Applications-scope .table th,
+  .Applications-scope .table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .Applications-scope .btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
 }

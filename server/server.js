@@ -419,7 +419,7 @@ app.get("/api/freelancer/myapplication/:id", (req, res) => {
   const id = req.params.id;
   console.log("freelancer_id:", id);
 
-  const query = `SELECT u.full_name, u.email as email, u.phone as phone, p.title, p.description, a.status FROM users as u,projects as p,applications as a 
+  const query = `SELECT p.project_id, u.full_name, u.email as email, u.phone as phone, p.title, p.description, a.status FROM users as u,projects as p,applications as a 
     WHERE u.user_id = p.founder_id AND p.project_id = a.project_id AND freelancer_id = ?`;
 
   db.query(query, [id], (err, result) => {
@@ -435,12 +435,60 @@ app.get("/api/freelancer/myapplication/:id", (req, res) => {
     });
   });
 });
+
+app.get("/api/founder/dashboard/:id",(req,res)=>{
+  const id = req.params.id;
+  console.log(id);
+  const query = `SELECT 
+  (SELECT COUNT(*) FROM projects WHERE founder_id=?) AS totalProjects ,
+  (SELECT COUNT(*) FROM projects WHERE founder_id=? AND status = 'active') AS activeProjects,
+  (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE founder_id=? ) AS totalApplications,
+  (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id AND a.status='accepted' WHERE founder_id=?) AS acceptedFreelancers`;
+
+  db.query(query,[id,id,id,id],(err,result)=>{
+    if(err){
+      console.log(err);
+      res.status(500).json({
+        message:"Error in Data fatching"
+      })
+    }
+    console.log(result)
+    res.json({
+      success:true,
+      message:"Successfully fatched",
+      data:result[0]
+    })
+  })
+})
+
+app.get("/api/freelancer/dashboard/:id",(req,res)=>{
+  const freelancer_id = req.params.id;
+
+  const query = `SELECT 
+                (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE freelancer_id=?) AS appliedProjects, 
+                (SELECT COUNT(*) FROM applications WHERE status="accepted" AND freelancer_id=?) AS acceptedProjects,
+                (SELECT COUNT(*) FROM applications WHERE status="rejected" AND freelancer_id=?) AS rejeted,
+                (SELECT COUNT(*) FROM applications WHERE status="pending" AND freelancer_id=?) AS pending,
+                (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id=p.project_id WHERE p.status="active" AND freelancer_id=?) AS activeProjects`;
+                
+  db.query(query,[freelancer_id,freelancer_id,freelancer_id,freelancer_id,freelancer_id],(err,result)=>{
+    if(err){
+      console.log(err)
+      res.status(500).json({
+        message:"Error occured during fatching data"
+      })
+    }
+    res.json({
+      success:true,
+      message:"Successfully fatched",
+      data:result[0]
+    })
+  })
+})
 app.put("/api/block-user/:id", (req, res) => {
   const userId = req.params.id;
 
-  const query = `
-                    UPDATE users SET status = IF(status = 'active', 'blocked', 'active') WHERE user_id = ?;
-`;
+  const query = ` UPDATE users SET status = IF(status = 'active', 'blocked', 'active') WHERE user_id = ?;`;
 
   db.query(query, [userId], (err, result) => {
     if (err) {

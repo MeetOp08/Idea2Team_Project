@@ -2,26 +2,42 @@ import '../../styles/BrowseProjects.css';
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import SearchBar from '../../components/common/SearchBar';
-import '../../styles/BrowseProject.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const BrowseProjects = () => {
 
     const [projects, setProjects] = useState([]);
+    const [appliedProjects, setAppliedProjects] = useState([]);
     const [expanded, setExpanded] = useState({});
     const navigate = useNavigate();
 
     /* ===============================
-       FETCH PROJECTS
+       FETCH PROJECTS & APPLICATIONS
     ================================ */
 
     useEffect(() => {
+        // Fetch Projects
         axios.get("http://localhost:1337/api/projects")
             .then(res => {
                 setProjects(res.data.data);
             })
             .catch(err => console.log(err));
+            
+        // Fetch freelancer's applied projects
+        const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            const user_id = user.id || user.user_id;
+            if (user_id) {
+                axios.get(`http://localhost:1337/api/freelancer/myapplication/${user_id}`)
+                    .then(res => {
+                        const ids = res.data.data.map(app => app.project_id);
+                        setAppliedProjects(ids);
+                    })
+                    .catch(err => console.error("Error fetching applied projects", err));
+            }
+        }
     }, []);
 
     // Toggle description
@@ -42,6 +58,7 @@ const BrowseProjects = () => {
 
     return (
         <DashboardLayout role="freelancer">
+            <div className="BrowseProjects-scope">
             {/* PAGE HEADER */}
             <div className="page-header">
                 <div>
@@ -112,19 +129,30 @@ const BrowseProjects = () => {
                                 </div>
 
                                 <div className="project-actions">
-                                    <button
-                                        className="edit-btn"
-                                        style={{ width: '100%' }}
-                                        onClick={() => handleApply(val.project_id)}
-                                    >
-                                        Apply Now
-                                    </button>
+                                    {appliedProjects.includes(val.project_id) ? (
+                                        <button
+                                            className="edit-btn"
+                                            style={{ width: '100%', background: '#9ca3af', borderColor: '#9ca3af', cursor: 'not-allowed', color: 'white' }}
+                                            disabled
+                                        >
+                                            Already Applied
+                                        </button>
+                                    ) : (
+                                        <button
+                                            className="edit-btn"
+                                            style={{ width: '100%' }}
+                                            onClick={() => handleApply(val.project_id)}
+                                        >
+                                            Apply Now
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         );
                     })
                 )}
             </div>
+                    </div>
         </DashboardLayout>
     );
 };

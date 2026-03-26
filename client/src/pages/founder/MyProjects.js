@@ -4,7 +4,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import SearchBar from '../../components/common/SearchBar';
 
 import axios from "axios";
-import "../../styles/myproject.css";
+
 import { useNavigate } from 'react-router-dom';
 
 const MyProjects = () => {
@@ -57,6 +57,7 @@ const MyProjects = () => {
 
     return (
         <DashboardLayout role="founder">
+            <div className="MyProjects-scope">
 
             <div className="page-header">
                 <div>
@@ -106,14 +107,10 @@ const MyProjects = () => {
 
                             </p>
 
-                            <p className="project-founder">
-                                <strong>Founder:</strong> Meet
-                            </p>
 
                             {/* Skills */}
 
                             <div className="skills">
-
                                 {val.required_skills.split(",").map((skill, index) => (
                                     <span key={index} className="skill-tag">
                                         {skill}
@@ -134,9 +131,9 @@ const MyProjects = () => {
                                 <strong>Team Required:</strong> {val.team_members_required} freelancers
                             </p>
 
-                            <div className="status-line">
-                                Status: <span className="status active">Active</span>
-                            </div>
+                            <p className="status-line">
+                               <strong>Status:</strong>  <span className="status active">Active</span>
+                            </p>
 
                             <div className="uploadFile">
                                 File: {val.upload_file ? (
@@ -173,6 +170,7 @@ const MyProjects = () => {
 
             </div>
 
+                    </div>
         </DashboardLayout>
     );
 };

@@ -6,6 +6,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 const FounderProfile = () => {
     return (
         <DashboardLayout role="founder">
+            <div className="FounderProfile-scope">
             <div className="page-header">
                 <div>
                     <h1>🧑‍💼 My Profile</h1>
@@ -112,6 +113,7 @@ const FounderProfile = () => {
                     </div>
                 </div>
             </div>
+                    </div>
         </DashboardLayout>
     );
 };

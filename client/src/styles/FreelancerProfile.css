@@ -1,10 +1,10 @@
-.fp-profile-page {
+.FreelancerProfile-scope .fp-profile-page {
   padding: 20px;
   max-width: 1000px;
   margin: 0 auto;
 }
 
-.fp-header-card {
+.FreelancerProfile-scope .fp-header-card {
   background: white;
   border-radius: 16px;
   overflow: hidden;
@@ -13,12 +13,12 @@
   position: relative;
 }
 
-.fp-cover {
+.FreelancerProfile-scope .fp-cover {
   height: 160px;
   background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
 }
 
-.fp-avatar-section {
+.FreelancerProfile-scope .fp-avatar-section {
   padding: 0 40px 30px;
   margin-top: -50px;
   display: flex;
@@ -26,7 +26,7 @@
   gap: 25px;
 }
 
-.fp-avatar-large {
+.FreelancerProfile-scope .fp-avatar-large {
   width: 120px;
   height: 120px;
   border-radius: 24px;
@@ -41,30 +41,30 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-.fp-user-info h2 {
+.FreelancerProfile-scope .fp-user-info h2 {
   font-size: 1.8rem;
   font-weight: 700;
   color: #111827;
   margin-bottom: 4px;
 }
 
-.fp-user-info p {
+.FreelancerProfile-scope .fp-user-info p {
   color: #6b7280;
   font-size: 1.1rem;
 }
 
-.fp-form-card {
+.FreelancerProfile-scope .fp-form-card {
   background: white;
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.fp-form-section {
+.FreelancerProfile-scope .fp-form-section {
   margin-bottom: 40px;
 }
 
-.fp-form-section-header {
+.FreelancerProfile-scope .fp-form-section-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -73,28 +73,28 @@
   padding-bottom: 12px;
 }
 
-.fp-form-section-icon {
+.FreelancerProfile-scope .fp-form-section-icon {
   font-size: 1.5rem;
 }
 
-.fp-form-section-title {
+.FreelancerProfile-scope .fp-form-section-title {
   font-size: 1.25rem;
   font-weight: 700;
   color: #1f2937;
 }
 
-.fp-form-grid {
+.FreelancerProfile-scope .fp-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-bottom: 20px;
 }
 
-.fp-form-group {
+.FreelancerProfile-scope .fp-form-group {
   margin-bottom: 20px;
 }
 
-.fp-form-label {
+.FreelancerProfile-scope .fp-form-label {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
@@ -102,7 +102,7 @@
   margin-bottom: 8px;
 }
 
-.fp-form-input {
+.FreelancerProfile-scope .fp-form-input {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid #e5e7eb;
@@ -112,26 +112,26 @@
   background: #f9fafb;
 }
 
-.fp-form-input:focus {
+.FreelancerProfile-scope .fp-form-input:focus {
   outline: none;
   border-color: #4f46e5;
   background: white;
   box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
-.fp-form-textarea {
+.FreelancerProfile-scope .fp-form-textarea {
   min-height: 120px;
   resize: vertical;
 }
 
-.fp-skills-container {
+.FreelancerProfile-scope .fp-skills-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 15px;
 }
 
-.fp-skill-tag {
+.FreelancerProfile-scope .fp-skill-tag {
   background: #eef2ff;
   color: #4f46e5;
   padding: 8px 16px;
@@ -143,16 +143,17 @@
   gap: 8px;
 }
 
-.fp-skill-remove-btn {
+.FreelancerProfile-scope .fp-skill-remove-btn {
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.2s;
 }
 
-.fp-skill-remove-btn:hover {
+.FreelancerProfile-scope .fp-skill-remove-btn:hover {
   opacity: 1;
 }
-button{
+
+.FreelancerProfile-scope button {
   background-color: #4f46e5;
   color: white;
   border: none;
@@ -161,7 +162,8 @@ button{
   cursor: pointer;
   transition: all 0.2s;
 }
-button:hover{
+
+.FreelancerProfile-scope button:hover {
   background-color: #4f46e5;
   color: white;
   border: none;
@@ -172,7 +174,7 @@ button:hover{
 }
 
 @media (max-width: 768px) {
-  .fp-form-grid {
+  .FreelancerProfile-scope .fp-form-grid {
     grid-template-columns: 1fr;
   }
 }

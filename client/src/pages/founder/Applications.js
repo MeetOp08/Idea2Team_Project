@@ -5,7 +5,6 @@ import {useNavigate} from "react-router-dom"
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "../../styles/application.css";
 
 const Applications = () => {
  
@@ -54,6 +53,7 @@ useEffect(()=>{
 
     return (
       <DashboardLayout role="founder">
+            <div className="Applications-scope">
            <div className="page-header">
                 <div>
                     <h1>Applications</h1>
@@ -117,7 +117,8 @@ useEffect(()=>{
             </tbody>
            </table>
         </div>
-      </DashboardLayout>
+                  </div>
+        </DashboardLayout>
     );
 };
 

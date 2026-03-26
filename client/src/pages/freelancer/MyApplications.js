@@ -41,6 +41,7 @@ const MyApplications = () => {
 
   return (
     <DashboardLayout role="freelancer">
+            <div className="MyApplications-scope">
       <div className="table-container">
         <h2 className="table-title">My Applications</h2>
 
@@ -87,7 +88,8 @@ const MyApplications = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
+                </div>
+        </DashboardLayout>
   );
 };
 

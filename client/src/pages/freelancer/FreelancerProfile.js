@@ -76,6 +76,7 @@ const FreelancerProfile = () => {
 
     return (
         <DashboardLayout role="freelancer">
+            <div className="FreelancerProfile-scope">
             <div className="page-header">
                 <div>
                     <h1>👩‍💻 My Profile</h1>
@@ -186,6 +187,7 @@ const FreelancerProfile = () => {
                     </div>
                 </div>
             </div>
+                    </div>
         </DashboardLayout>
     );
 };

@@ -1,98 +1,32 @@
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
 .card {
   background: white;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--gray-200);
-  padding: var(--space-6);
-  transition: all var(--transition-base);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.3s;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-5);
+  /* transform: translateY(16px); */
+  transform:translateY(-6px)
 }
 
 .card-title {
-  font-size: var(--text-lg);
-  font-weight: var(--weight-semibold);
-  color: var(--gray-900);
+  font-weight:bold;
+  font-size: 18px;
+  color: #4e4f50;
 }
 
-.project-card-meta span {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-8);
-}
-
-.page-header h1 {
-  font-size: var(--text-2xl);
-}
-
-.page-header p {
-  font-size: var(--text-sm);
-  color: var(--gray-500);
-  margin-top: var(--space-1);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-6);
-  margin-bottom: var(--space-8);
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--space-6);
-}
-
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  min-width: 8px;
-  border-radius: var(--radius-full);
-  margin-top: 6px;
-}
-
-.activity-content {
-  flex: 1;
-}
-
-.activity-text {
-  font-size: var(--text-sm);
-  color: var(--gray-700);
-}
-
-.activity-text strong {
-  color: var(--gray-900);
-}
-
-.activity-time {
-  font-size: var(--text-xs);
-  color: var(--gray-400);
+.card-value {
+  font-size: 20px;
+  font-weight:bolder;
+  display: block;
+  margin-top: 8px;
 }

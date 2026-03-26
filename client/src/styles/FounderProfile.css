@@ -1,4 +1,4 @@
-.btn {
+.FounderProfile-scope .btn {
   display: inline-flex;
   height: 40px;
   align-items: center;
@@ -17,28 +17,28 @@
   line-height: 1;
 }
 
-.btn-primary {
+.FounderProfile-scope .btn-primary {
   background: var(--gradient-primary);
   color: white;
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
 }
 
-.btn-primary:hover {
+.FounderProfile-scope .btn-primary:hover {
   box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
   transform: translateY(-1px);
 }
 
-.project-card-meta span {
+.FounderProfile-scope .project-card-meta span {
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
 
-.form-group {
+.FounderProfile-scope .form-group {
   margin-bottom: var(--space-5);
 }
 
-.form-label {
+.FounderProfile-scope .form-label {
   display: block;
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
@@ -46,7 +46,7 @@
   margin-bottom: var(--space-2);
 }
 
-.form-input {
+.FounderProfile-scope .form-input {
   width: 400px;
   padding: var(--space-3) var(--space-4);
   background: white;
@@ -57,21 +57,21 @@
   transition: all var(--transition-fast);
 }
 
-.form-input:focus {
+.FounderProfile-scope .form-input:focus {
   border-color: var(--primary-500);
   box-shadow: 0 0 0 3px var(--primary-100);
 }
 
-.form-input::placeholder {
+.FounderProfile-scope .form-input::placeholder {
   color: var(--gray-400);
 }
 
-.form-textarea {
+.FounderProfile-scope .form-textarea {
   resize: vertical;
   min-height: 100px;
 }
 
-.form-select {
+.FounderProfile-scope .form-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 3.5L11.5 6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -79,32 +79,32 @@
   padding-right: 36px;
 }
 
-.search-bar input::placeholder {
+.FounderProfile-scope .search-bar input::placeholder {
   color: var(--gray-400);
 }
 
-.page-header {
+.FounderProfile-scope .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-8);
 }
 
-.page-header h1 {
+.FounderProfile-scope .page-header h1 {
   font-size: var(--text-2xl);
 }
 
-.page-header p {
+.FounderProfile-scope .page-header p {
   font-size: var(--text-sm);
   color: var(--gray-500);
   margin-top: var(--space-1);
 }
 
-.profile-page {
+.FounderProfile-scope .profile-page {
   max-width: 800px;
 }
 
-.profile-header-card {
+.FounderProfile-scope .profile-header-card {
   background: white;
   border-radius: var(--radius-xl);
   border: 1px solid var(--gray-200);
@@ -112,13 +112,13 @@
   margin-bottom: var(--space-6);
 }
 
-.profile-cover {
+.FounderProfile-scope .profile-cover {
   height: 160px;
   background: var(--gradient-primary);
   position: relative;
 }
 
-.profile-avatar-section {
+.FounderProfile-scope .profile-avatar-section {
   display: flex;
   align-items: flex-end;
   gap: var(--space-5);
@@ -127,7 +127,7 @@
   margin-bottom: var(--space-5);
 }
 
-.profile-avatar-large {
+.FounderProfile-scope .profile-avatar-large {
   width: 96px;
   height: 96px;
   border-radius: var(--radius-full);
@@ -142,20 +142,20 @@
   box-shadow: var(--shadow-lg);
 }
 
-.profile-user-info h2 {
+.FounderProfile-scope .profile-user-info h2 {
   font-size: var(--text-xl);
   margin-bottom: var(--space-1);
 }
 
-.profile-user-info p {
+.FounderProfile-scope .profile-user-info p {
   font-size: var(--text-sm);
 }
 
-.profile-details {
+.FounderProfile-scope .profile-details {
   padding: 0 var(--space-6) var(--space-6);
 }
 
-.profile-details-list {
+.FounderProfile-scope .profile-details-list {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
@@ -163,7 +163,7 @@
   color: var(--gray-500);
 }
 
-.form-card {
+.FounderProfile-scope .form-card {
   background: white;
   border-radius: var(--radius-2xl);
   border: 1px solid var(--gray-200);
@@ -174,7 +174,7 @@
         0 6px 24px rgba(15, 23, 42, 0.06);
 }
 
-.form-card::before {
+.FounderProfile-scope .form-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -185,7 +185,7 @@
   z-index: 1;
 }
 
-.form-card h2 {
+.FounderProfile-scope .form-card h2 {
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   color: var(--gray-900);
@@ -195,31 +195,31 @@
   font-family: var(--font-heading);
 }
 
-.form-card>p {
+.FounderProfile-scope .form-card>p {
   color: var(--gray-500);
   font-size: var(--text-sm);
   margin-bottom: var(--space-6);
 }
 
-.form-section {
+.FounderProfile-scope .form-section {
   padding: var(--space-8);
   border-bottom: 1px solid var(--gray-100);
   transition: background-color var(--transition-base);
 }
 
-.form-section:hover {
+.FounderProfile-scope .form-section:hover {
   background-color: rgba(248, 250, 252, 0.5);
 }
 
-.form-section-last {
+.FounderProfile-scope .form-section-last {
   border-bottom: none;
 }
 
-.form-section-spaced {
+.FounderProfile-scope .form-section-spaced {
   margin-top: 32px;
 }
 
-.form-section-header {
+.FounderProfile-scope .form-section-header {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -227,7 +227,7 @@
   margin-bottom: var(--space-6);
 }
 
-.form-section-icon {
+.FounderProfile-scope .form-section-icon {
   width: 44px;
   height: 44px;
   min-width: 44px;
@@ -242,7 +242,7 @@
   flex-shrink: 0;
 }
 
-.form-section-title {
+.FounderProfile-scope .form-section-title {
   font-size: var(--text-base);
   font-weight: var(--weight-bold);
   color: var(--gray-900);
@@ -251,24 +251,24 @@
   line-height: 1.3;
 }
 
-.form-section-desc {
+.FounderProfile-scope .form-section-desc {
   font-size: var(--text-sm);
   color: var(--gray-400);
   line-height: var(--leading-normal);
   margin: 0;
 }
 
-.form-grid {
+.FounderProfile-scope .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-5);
 }
 
-.form-grid .full-width {
+.FounderProfile-scope .form-grid .full-width {
   grid-column: 1 / -1;
 }
 
-.form-card .form-label {
+.FounderProfile-scope .form-card .form-label {
   display: block;
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
@@ -277,7 +277,7 @@
   letter-spacing: 0.01em;
 }
 
-.form-card .form-input {
+.FounderProfile-scope .form-card .form-input {
   width: 100%;
   background-color: var(--gray-50);
   border: 1.5px solid var(--gray-200);
@@ -290,12 +290,12 @@
   box-sizing: border-box;
 }
 
-.form-card .form-input:hover {
+.FounderProfile-scope .form-card .form-input:hover {
   border-color: var(--gray-300);
   background-color: white;
 }
 
-.form-card .form-input:focus {
+.FounderProfile-scope .form-card .form-input:focus {
   background-color: white;
   border-color: var(--primary-500);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08),
@@ -303,22 +303,22 @@
   outline: none;
 }
 
-.form-card .form-input::placeholder {
+.FounderProfile-scope .form-card .form-input::placeholder {
   color: var(--gray-400);
   font-weight: var(--weight-normal);
 }
 
-.form-card .form-textarea {
+.FounderProfile-scope .form-card .form-textarea {
   resize: vertical;
   min-height: 120px;
   line-height: var(--leading-relaxed);
 }
 
-.form-card .form-textarea-large {
+.FounderProfile-scope .form-card .form-textarea-large {
   min-height: 140px;
 }
 
-.form-card .form-select {
+.FounderProfile-scope .form-card .form-select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -331,16 +331,16 @@
   padding-right: 40px;
 }
 
-.form-card .form-select:hover {
+.FounderProfile-scope .form-card .form-select:hover {
   background-color: white;
 }
 
-.form-card .form-select:focus {
+.FounderProfile-scope .form-card .form-select:focus {
   background-color: white;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%236366f1' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
 
-.form-card .form-helper {
+.FounderProfile-scope .form-card .form-helper {
   font-size: var(--text-xs);
   color: var(--gray-400);
   margin-top: var(--space-2);

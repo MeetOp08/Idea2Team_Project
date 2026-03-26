@@ -101,6 +101,7 @@ const PostProject = () => {
 
     return (
         <DashboardLayout role="founder"     >
+            <div className="PostProject-scope">
             <div className="page-header">
                 <div>
                     <h1>🚀 Post a New Project</h1>
@@ -262,6 +263,7 @@ const PostProject = () => {
                 </div>
 
             </div>
+                    </div>
         </DashboardLayout>
     );
 };

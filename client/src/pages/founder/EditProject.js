@@ -62,6 +62,7 @@ const EditProject = () => {
 
  return (
 <DashboardLayout role="founder">
+            <div className="EditProject-scope">
 
 <div className="edit-project-container">
 
@@ -126,7 +127,8 @@ const EditProject = () => {
 </div>
 </div>
 
-</DashboardLayout>
+            </div>
+        </DashboardLayout>
 );
 };
 

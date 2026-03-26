@@ -2,248 +2,244 @@
 PAGE LAYOUT
 ===================================================== */
 
-.form-page {
-    padding: 30px;
-    display: flex;
-    justify-content: center;
+.PostProject-scope .form-page {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
 }
 
 /* =====================================================
 CARD CONTAINER
 ===================================================== */
 
-.form-card {
-    width: 100%;
-    max-width: 900px;
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 28px;
-    border: 1px solid #f0f0f0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+.PostProject-scope .form-card {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 28px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 /* =====================================================
 PAGE HEADER
 ===================================================== */
 
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+.PostProject-scope .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
-.page-header h1 {
-    font-size: 24px;
-    margin: 0;
+.PostProject-scope .page-header h1 {
+  font-size: 24px;
+  margin: 0;
 }
 
-.page-header p {
-    font-size: 14px;
-    color: #666;
-    margin-top: 4px;
+.PostProject-scope .page-header p {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
 }
 
 /* =====================================================
 POST PROJECT PAGE
 ===================================================== */
 
-.pp-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 30px;
+.PostProject-scope .pp-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
 }
 
 /* CARD */
 
-.pp-card {
-    width: 100%;
-    max-width: 1000px;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-    transition: 0.2s ease;
+.PostProject-scope .pp-card {
+  width: 100%;
+  max-width: 1000px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  transition: 0.2s ease;
 }
 
-.pp-card:hover {
-    transform: translateY(-2px);
+.PostProject-scope .pp-card:hover {
+  transform: translateY(-2px);
 }
 
 /* SECTIONS */
 
-.pp-section {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+.PostProject-scope .pp-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
 }
 
-.pp-section-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #1f2937;
+.PostProject-scope .pp-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1f2937;
 }
 
 /* GRID */
 
-.pp-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+.PostProject-scope .pp-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.pp-grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
+.PostProject-scope .pp-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
 }
 
 /* FORM FIELD */
 
-.pp-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+.PostProject-scope .pp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.pp-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
+.PostProject-scope .pp-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
 }
 
 /* INPUT */
 
-.pp-input {
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
-    background: #fafafa;
-    transition: 0.2s;
+.PostProject-scope .pp-input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background: #fafafa;
+  transition: 0.2s;
 }
 
-.pp-input:hover {
-    border-color: #a5b4fc;
+.PostProject-scope .pp-input:hover {
+  border-color: #a5b4fc;
 }
 
-.pp-input:focus {
-    outline: none;
-    border-color: #6366f1;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+.PostProject-scope .pp-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 /* TEXTAREA */
 
-.pp-textarea {
-    min-height: 90px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    resize: vertical;
-    font-size: 14px;
+.PostProject-scope .pp-textarea {
+  min-height: 90px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  resize: vertical;
+  font-size: 14px;
 }
 
 /* =====================================================
 FILE UPLOAD UI
 ===================================================== */
 
-.file-upload-wrapper {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.PostProject-scope .file-upload-wrapper {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.upload-label {
-    width: fit-content;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.2s;
+.PostProject-scope .upload-label {
+  width: fit-content;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
 }
 
-.upload-label:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+.PostProject-scope .upload-label:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
 }
 
-.file-name {
-    font-size: 13px;
-    color: #555;
-    background: #f9fafb;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #eee;
-    max-width: 320px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.PostProject-scope .file-name {
+  font-size: 13px;
+  color: #555;
+  background: #f9fafb;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  max-width: 320px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* =====================================================
 ACTION BUTTONS
 ===================================================== */
 
-.pp-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 25px;
+.PostProject-scope .pp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
 }
 
-button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
+.PostProject-scope button {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-button:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
+.PostProject-scope button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
+@media (max-width:900px) {
+  .PostProject-scope .pp-grid-2 {
+    grid-template-columns: 1fr;
+  }
 
+  .PostProject-scope .pp-grid-3 {
+    grid-template-columns: 1fr;
+  }
 
-@media(max-width:900px) {
-
-    .pp-grid-2 {
-        grid-template-columns: 1fr;
-    }
-
-    .pp-grid-3 {
-        grid-template-columns: 1fr;
-    }
-
-    .pp-card {
-        padding: 20px;
-    }
-
+  .PostProject-scope .pp-card {
+    padding: 20px;
+  }
 }
 
-@media(max-width:768px) {
+@media (max-width:768px) {
+  .PostProject-scope .form-page {
+    padding: 15px;
+  }
 
-    .form-page {
-        padding: 15px;
-    }
-
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
+  .PostProject-scope .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
+
 /* Generated from Global/Components/Pages */
-.btn {
+
+.PostProject-scope .btn {
   display: inline-flex;
   height: 40px;
   align-items: center;
@@ -262,57 +258,57 @@ button:hover {
   line-height: 1;
 }
 
-.btn-primary {
+.PostProject-scope .btn-primary {
   background: var(--gradient-primary);
   color: white;
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
 }
 
-.btn-primary:hover {
+.PostProject-scope .btn-primary:hover {
   box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
   transform: translateY(-1px);
 }
 
-.btn-secondary {
+.PostProject-scope .btn-secondary {
   background: var(--gray-100);
   color: var(--gray-700);
 }
 
-.btn-secondary:hover {
+.PostProject-scope .btn-secondary:hover {
   background: var(--gray-200);
 }
 
-.stats-card-icon.success {
+.PostProject-scope .stats-card-icon.success {
   background: var(--success-50);
   color: var(--success-600);
 }
 
-.form-input::placeholder {
+.PostProject-scope .form-input::placeholder {
   color: var(--gray-400);
 }
 
-.search-bar input::placeholder {
+.PostProject-scope .search-bar input::placeholder {
   color: var(--gray-400);
 }
 
-.page-header {
+.PostProject-scope .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-8);
 }
 
-.page-header h1 {
+.PostProject-scope .page-header h1 {
   font-size: var(--text-2xl);
 }
 
-.page-header p {
+.PostProject-scope .page-header p {
   font-size: var(--text-sm);
   color: var(--gray-500);
   margin-top: var(--space-1);
 }
 
-.form-card .form-input::placeholder {
+.PostProject-scope .form-card .form-input::placeholder {
   color: var(--gray-400);
   font-weight: var(--weight-normal);
 }

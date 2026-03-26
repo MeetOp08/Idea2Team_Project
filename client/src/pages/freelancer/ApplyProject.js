@@ -60,6 +60,7 @@ const handleSubmit = () => {
 
 return(
 <DashboardLayout role="freelancer">
+            <div className="ApplyProject-scope">
 
 <div className="page-header">
 
@@ -165,6 +166,7 @@ Submit Application
 
 </div>
 
-</DashboardLayout>)
+            </div>
+        </DashboardLayout>)
 }
 export default ApplyProject;
