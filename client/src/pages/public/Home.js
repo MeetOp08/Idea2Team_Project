@@ -86,27 +86,6 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-
-            {/* Features Section */}
-            <section className="features-section">
-                <div className="section-header">
-                    <span className="section-label">Features</span>
-                    <h2>Everything You Need to Build & Scale</h2>
-                    <p>Powerful tools designed for founders and freelancers to collaborate seamlessly.</p>
-                </div>
-                <div className="features-grid">
-                    {features.map((f, i) => (
-                        <div className="feature-card" key={i}>
-                            <div className="feature-icon" style={{ background: f.bg, color: f.color }}>
-                                {f.icon}
-                            </div>
-                            <h3>{f.title}</h3>
-                            <p>{f.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
             {/* How It Works */}
             <section className="how-section">
                 <div className="section-header">
@@ -134,28 +113,7 @@ const Home = () => {
             </section>
 
             {/* Testimonials */}
-            <section className="testimonials-section">
-                <div className="section-header">
-                    <span className="section-label">Testimonials</span>
-                    <h2>Loved by Founders & Freelancers</h2>
-                    <p>See what our community has to say about their experience on Idea2Team.</p>
-                </div>
-                <div className="testimonials-grid">
-                    {testimonials.map((t, i) => (
-                        <div className="testimonial-card" key={i}>
-                            <div className="testimonial-stars">★★★★★</div>
-                            <p className="testimonial-text">"{t.text}"</p>
-                            <div className="testimonial-author">
-                                <div className="avatar avatar-md" style={{ background: t.color }}>{t.initials}</div>
-                                <div className="testimonial-author-info">
-                                    <p className="name">{t.name}</p>
-                                    <p className="role">{t.role}</p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            
 
             {/* CTA */}
             <section className="cta-section">

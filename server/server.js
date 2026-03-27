@@ -21,7 +21,7 @@ db.connect((err) => {
   if (err) {
     console.error("Connection Failed❌ and error is:", err);
   } else {
-    console.log("   Connected to the database successfully!✅");
+    console.log("Connected to the database successfully!✅");
   }
 });
 //admin login

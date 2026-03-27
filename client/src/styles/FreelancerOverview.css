@@ -1,11 +1,29 @@
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+.freelancer-overview-container {
   padding: 20px;
 }
 
-.card {
+.freelancer-overview-container .overview-header {
+  margin-bottom: 20px;
+}
+
+.freelancer-overview-container .overview-header h2 {
+  font-size: 24px;
+  color: #333;
+}
+
+.freelancer-overview-container .overview-header p {
+  color: #666;
+  margin-top: 5px;
+}
+
+.freelancer-overview-container .dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.freelancer-overview-container .card {
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -13,20 +31,87 @@
   transition: 0.3s;
 }
 
-.card:hover {
-  /* transform: translateY(16px); */
-  transform:translateY(-6px)
+.freelancer-overview-container .card:hover {
+  transform: translateY(-6px);
 }
 
-.card-title {
-  font-weight:bold;
+.freelancer-overview-container .card .icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.freelancer-overview-container .card-title {
+  font-weight: bold;
   font-size: 18px;
   color: #4e4f50;
+  margin-bottom: 5px;
 }
 
-.card-value {
+.freelancer-overview-container .card-value {
   font-size: 20px;
-  font-weight:bolder;
+  font-weight: bolder;
   display: block;
   margin-top: 8px;
+}
+
+/* Colors similar to FounderOverview */
+.freelancer-overview-container .card.blue { border-left: 5px solid #3b82f6; }
+.freelancer-overview-container .card.green { border-left: 5px solid #22c55e; }
+.freelancer-overview-container .card.red { border-left: 5px solid #ef4444; }
+.freelancer-overview-container .card.yellow { border-left: 5px solid #f59e0b; }
+.freelancer-overview-container .card.purple { border-left: 5px solid #8b5cf6; }
+
+/* Quick actions */
+.freelancer-overview-container .quick-actions {
+  margin-top: 30px;
+}
+
+.freelancer-overview-container .quick-actions h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.freelancer-overview-container .quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.freelancer-overview-container .quick-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 25px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.freelancer-overview-container .quick-card:hover {
+  transform: translateY(-6px);
+}
+
+.freelancer-overview-container .quick-card.primary  {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(78, 70, 229, 0.66));
+  color: #0f172a;
+
+}
+
+.freelancer-overview-container .quick-card.primary h3,
+.freelancer-overview-container .quick-card.primary p {
+  color: rgb(0, 0, 0);
+}
+
+.freelancer-overview-container .q-icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.freelancer-overview-container .quick-card h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.freelancer-overview-container .quick-card p {
+  font-size: 14px;
+  color: #64748b;
 }

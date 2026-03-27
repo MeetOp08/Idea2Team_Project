@@ -1,32 +1,220 @@
-.dashboard-cards {
+/* BACKGROUND */
+.founder-overview-container {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  margin: -24px; /* offset any default dashboard padding */
+  padding: 24px;
+  color: white; 
+}
+
+.founder-overview-container .overview-header {
+  padding: 20px 10px;
+  color: white;
+}
+.founder-overview-container .overview-header h2 {
+  color: white;
+  margin-bottom: 8px;
+}
+.founder-overview-container .overview-header p {
+  color: #cbd5e1;
+}
+
+/* DASHBOARD CARDS */
+.founder-overview-container .dashboard-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  padding: 20px;
+  padding: 20px 10px;
 }
 
-.card {
-  background: white;
-  border-radius: 12px;
+/* CARD BASE */
+.founder-overview-container .card {
+  background: #ffffff;
+  border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   transition: 0.3s;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
 }
 
-.card:hover {
-  /* transform: translateY(16px); */
-  transform:translateY(-6px)
+/* HOVER EFFECT */
+.founder-overview-container .card:hover {
+  transform: translateY(-6px) scale(1.02);
 }
 
-.card-title {
-  font-weight:bold;
-  font-size: 18px;
-  color: #4e4f50;
+/* DIFFERENT COLORS FOR EACH CARD */
+.founder-overview-container .card:nth-child(1) { border-left: 6px solid #3b82f6; } /* blue */
+.founder-overview-container .card:nth-child(2) { border-left: 6px solid #22c55e; } /* green */
+.founder-overview-container .card:nth-child(3) { border-left: 6px solid #8b5cf6; } /* purple */
+.founder-overview-container .card:nth-child(4) { border-left: 6px solid #f59e0b; } /* orange */
+
+/* TEXT */
+.founder-overview-container .card p {
+  font-weight: 600;
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
 }
 
-.card-value {
-  font-size: 20px;
-  font-weight:bolder;
-  display: block;
+.founder-overview-container .card-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.founder-overview-container .card h2 {
+  font-size: 26px;
+  font-weight: 700;
   margin-top: 8px;
+  color: #0f172a;
+}
+
+.founder-overview-container .card-value {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 8px;
+  color: #0f172a;
+}
+
+/* SHORTCUT SECTION */
+.founder-overview-container .shortcut {
+  margin: 30px;
+}
+
+.founder-overview-container .heading {
+  text-align: center;
+  color: white;
+}
+
+/* GRID INSTEAD OF FLEX */
+.founder-overview-container .scards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; 
+  gap: 20px;
+  margin-top: 25px;
+}
+
+/* SHORTCUT CARD */
+.founder-overview-container .shortcut-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* FIX INVALID NESTING */
+.founder-overview-container .shortcut-card p {
+  font-family: Arial, sans-serif;
+  font-weight: 500;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.founder-overview-container .shortcut-card h3 {
+  color: #4f46e5;
+  margin-bottom: 10px;
+}
+
+/* HOVER */
+.founder-overview-container .shortcut-card:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* PRIMARY CARD (POST PROJECT) */
+.founder-overview-container .shortcut-card:first-child {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+}
+
+.founder-overview-container .shortcut-card:first-child p {
+  color: #e0e7ff;
+}
+
+.founder-overview-container .shortcut-card:first-child h3 {
+  color: white;
+}
+
+/* QUICK ACTION SECTION */
+.founder-overview-container .quick-actions {
+  margin: 40px 10px;
+}
+
+.founder-overview-container .quick-actions > h3 {
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* GRID */
+.founder-overview-container .quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.founder-overview-container .quick-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 25px;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* HOVER EFFECT */
+.founder-overview-container .quick-card:hover {
+  transform: translateY(-8px) scale(1.03);
+}
+
+/* ICON */
+.founder-overview-container .q-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+/* TEXT */
+.founder-overview-container .quick-card h3 {
+  margin: 10px 0 5px;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.founder-overview-container .quick-card p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* PRIMARY CARD */
+.founder-overview-container .quick-card.primary {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(78, 70, 229, 0.66));
+  color: #0f172a;
+}
+.founder-overview-container .quick-card.primary {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(78, 70, 229, 0.66));
+  color: #0f172a;
+}
+/* For visibility with gradient background */
+.founder-overview-container .quick-card.primary h3 {
+  color: #0f172a;
+}
+.founder-overview-container .quick-card.primary p {
+  color: #1e293b;
+}
+
+/* COOL GLOW EFFECT */
+.founder-overview-container .quick-card::before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(99,102,241,0.2);
+  top: -20px;
+  right: -20px;
+  border-radius: 50%;
 }
