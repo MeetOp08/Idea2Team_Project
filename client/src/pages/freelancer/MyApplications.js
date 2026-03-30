@@ -34,7 +34,6 @@ const MyApplications = () => {
           <p style="font-size: 0.9em; color: #555; line-height: 1.5;">${app.description || "No description provided."}</p>
         </div>
       `,
-      icon: "info",
       confirmButtonColor: "#4f46e5",
     });
   };

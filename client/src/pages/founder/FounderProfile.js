@@ -1,119 +1,239 @@
-import '../../styles/FounderProfile.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
-
+import axios from "axios";
+import Swal from "sweetalert2";
+import '../../styles/FounderProfile.css';
 
 const FounderProfile = () => {
+    const user_id = sessionStorage.getItem("user_id");
+    const [user, setUser] = useState({});
+    const [profile, setProfile] = useState({
+        phone: "",
+        location: "",
+        bio: "",
+        company_name: "",
+        company_website: "",
+        industry: "Technology",
+        company_description: "",
+        image: "",
+    });
+    
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    useEffect(() => {
+        if (user_id) {
+            console.log("Fetching founder profile for user_id:", user_id);
+            
+            axios.get(`http://localhost:1337/api/founder-profile/${user_id}`)
+                .then(res => {
+                    console.log("Founder profile data fetched:", res.data);
+                    const data = res.data;
+                    
+                    if (data.full_name || data.email) {
+                        setUser({
+                            full_name: data.full_name || "",
+                            email: data.email || ""
+                        });
+                    }
+                    
+                    if (data) {
+                        setProfile({
+                            phone: data.phone || "",
+                            location: data.location || "",
+                            bio: data.bio || "",
+                            company_name: data.company_name || "",
+                            company_website: data.company_website || "",
+                            industry: data.industry || "Technology",
+                            company_description: data.company_description || "",
+                            image: data.image || "",
+                        });
+                    }
+                })
+                .catch(err => console.error("Error fetching founder profile:", err));
+        } else {
+            console.warn("No user_id found in sessionStorage");
+        }
+    }, [user_id]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProfile(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = () => {
+        const formData = new FormData();
+        formData.append("user_id", user_id);
+        formData.append("phone", profile.phone);
+        formData.append("location", profile.location);
+        formData.append("bio", profile.bio);
+        formData.append("company_name", profile.company_name);
+        formData.append("company_website", profile.company_website);
+        formData.append("industry", profile.industry);
+        formData.append("company_size", profile.company_size);
+        formData.append("company_description", profile.company_description);
+
+        if (selectedFile) {
+            formData.append("image", selectedFile);
+        } else {
+            formData.append("image", profile.image);
+        }
+
+        axios.post("http://localhost:1337/api/founder-profile", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
+            .then((res) => {
+                console.log("Founder profile saved:", res.data);
+                // Update image with filename returned from server
+                if (res.data.image) {
+                    setProfile(prev => ({ ...prev, image: res.data.image }));
+                    setSelectedFile(null);
+                }
+                Swal.fire("Success", "Profile updated successfully!", "success");
+            })
+            .catch(err => {
+                console.error("Error saving founder profile:", err);
+                Swal.fire("Error", "Failed to update profile", "error");
+            });
+    };
+
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setProfile(prev => ({ ...prev, image: URL.createObjectURL(file) }));
+        }
+    };
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith("blob:") || imagePath.startsWith("data:")) {
+            return imagePath;
+        }
+        return `http://localhost:1337/public/${imagePath}`;
+    };
+
     return (
         <DashboardLayout role="founder">
-            <div className="FounderProfile-scope">
-            <div className="page-header">
+            <div className="fdp-page-header">
                 <div>
                     <h1>🧑‍💼 My Profile</h1>
                     <p>Manage your personal and company information.</p>
                 </div>
-                <button className="btn btn-primary">Save Changes</button>
             </div>
 
-            <div className="profile-page">
-                <div className="profile-header-card">
-                    <div className="profile-cover"></div>
-                    <div className="profile-avatar-section">
-                        <div className="profile-avatar-large">AM</div>
-                        <div className="profile-user-info">
-                            <h2>Alex Morgan</h2>
-                            <p>Founder & CEO at TechVista Inc.</p>
+            <div className="fdp-profile-page">
+                <div className="fdp-header-card">
+                    <div className="fdp-cover"></div>
+                    <div className="fdp-avatar-section">
+                        <div className="fdp-avatar-wrapper">
+                            <label htmlFor="avatar-upload" className="fdp-avatar-label">
+                                <div className="fdp-avatar-large">
+                                    {profile.image ? (
+                                        <img src={getImageUrl(profile.image)} alt="Avatar" className="fdp-avatar-img" />
+                                    ) : (
+                                        <span>{user?.full_name?.charAt(0) || "F"}</span>
+                                    )}
+                                    <div className="fdp-avatar-overlay">
+                                        <span className="fdp-edit-icon">📷</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <input
+                                id="avatar-upload"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                style={{ display: 'none' }}
+                            />
+                        </div>
+                        <div className="fdp-user-info">
+                            <h2>{user?.full_name}</h2>
+                            <p>{profile.company_name ? `Founder at ${profile.company_name}` : "Startup Founder"}</p>
                         </div>
                     </div>
-                    <div className="profile-details">
-                        <div className="profile-details-list">
-                            <span>📍 San Francisco, CA</span>
-                            <span>🏢 TechVista Inc.</span>
-                            <span>📅 Joined Jan 2026</span>
-                            <span>⭐ 4.9 Rating</span>
+                    <div className="fdp-details">
+                        <div className="fdp-details-list">
+                            <span>📍 {profile.location || "Location not set"}</span>
+                            <span>🏢 {profile.company_name || "Company not set"}</span>
+                            <span>📅 Member</span>
+                            <span>⭐ 5.0 Rating</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="form-card">
-                    <div className="form-section">
-                        <div className="form-section-header">
-                            <span className="form-section-icon">👤</span>
+                <div className="fdp-form-card">
+                    <div className="fdp-form-section">
+                        <div className="fdp-form-section-header">
+                            <span className="fdp-form-section-icon">👤</span>
                             <div>
-                                <h3 className="form-section-title">Personal Information</h3>
-                                <p className="form-section-desc">Update your profile details and public information.</p>
+                                <h3 className="fdp-form-section-title">Personal Information</h3>
+                                <p className="fdp-form-section-desc">Update your profile details and public information.</p>
                             </div>
                         </div>
-                        <div className="form-grid">
-                            <div className="form-group">
-                                <label className="form-label">First Name</label>
-                                <input type="text" className="form-input" placeholder="Alex" defaultValue="Alex" />
+                        <div className="fdp-form-grid">
+                            <div className="fdp-form-group">
+                                <label className="fdp-form-label">Full Name</label>
+                                <input type="text" className="fdp-form-input" value={user?.full_name || ""} readOnly />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Last Name</label>
-                                <input type="text" className="form-input" placeholder="Morgan" defaultValue="Morgan" />
+                            <div className="fdp-form-group">
+                                <label className="fdp-form-label">Email</label>
+                                <input type="email" className="fdp-form-input" value={user?.email || ""} readOnly />
                             </div>
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Email</label>
-                            <input type="email" className="form-input" placeholder="alex@idea2team.com" defaultValue="alex@idea2team.com" />
+                        <div className="fdp-form-group">
+                            <label className="fdp-form-label">Phone</label>
+                            <input name="phone" type="tel" className="fdp-form-input" placeholder="+1 (555) 123-4567" value={profile.phone} onChange={handleChange} />
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Phone</label>
-                            <input type="tel" className="form-input" placeholder="+1 (555) 123-4567" defaultValue="+1 (555) 123-4567" />
+                        <div className="fdp-form-group">
+                            <label className="fdp-form-label">Location</label>
+                            <input name="location" type="text" className="fdp-form-input" placeholder="San Francisco, CA" value={profile.location} onChange={handleChange} />
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Location</label>
-                            <input type="text" className="form-input" placeholder="San Francisco, CA" defaultValue="San Francisco, CA" />
-                        </div>
-                        <div className="form-group">
-                            <label className="form-label">Bio</label>
-                            <textarea className="form-input form-textarea" placeholder="Tell us about yourself..." defaultValue="Serial entrepreneur and tech enthusiast. Building innovative products that solve real-world problems. Passionate about leveraging AI and data to create meaningful impact."></textarea>
+                        <div className="fdp-form-group">
+                            <label className="fdp-form-label">Bio</label>
+                            <textarea name="bio" className="fdp-form-input fdp-form-textarea" placeholder="Tell us about yourself..." value={profile.bio} onChange={handleChange}></textarea>
                         </div>
                     </div>
 
-                    <div className="form-section form-section-last form-section-spaced">
-                        <div className="form-section-header">
-                            <span className="form-section-icon">🏢</span>
+                    <div className="fdp-form-section">
+                        <div className="fdp-form-section-header">
+                            <span className="fdp-form-section-icon">🏢</span>
                             <div>
-                                <h3 className="form-section-title">Company Information</h3>
-                                <p className="form-section-desc">Details about your startup or company.</p>
+                                <h3 className="fdp-form-section-title">Company Information</h3>
+                                <p className="fdp-form-section-desc">Details about your startup or company.</p>
                             </div>
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Company Name</label>
-                            <input type="text" className="form-input" placeholder="TechVista Inc." defaultValue="TechVista Inc." />
+                        <div className="fdp-form-group">
+                            <label className="fdp-form-label">Company Name</label>
+                            <input name="company_name" type="text" className="fdp-form-input" placeholder="TechVista Inc." value={profile.company_name} onChange={handleChange} />
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Company Website</label>
-                            <input type="text" className="form-input" placeholder="https://techvista.io" defaultValue="https://techvista.io" />
+                        <div className="fdp-form-group">
+                            <label className="fdp-form-label">Company Website</label>
+                            <input name="company_website" type="text" className="fdp-form-input" placeholder="https://techvista.io" value={profile.company_website} onChange={handleChange} />
                         </div>
-                        <div className="form-grid">
-                            <div className="form-group">
-                                <label className="form-label">Industry</label>
-                                <select className="form-input form-select" defaultValue="Technology">
-                                    {['Technology', 'Healthcare', 'Finance', 'E-commerce', 'Education', 'Marketing', 'Other'].map((opt, i) => (
-                                        <option key={i} value={opt}>{opt}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Company Size</label>
-                                <select className="form-input form-select" defaultValue="11-50">
-                                    {['1-10', '11-50', '51-200', '200+'].map((opt, i) => (
+                        <div className="fdp-form-grid">
+                            <div className="fdp-form-group">
+                                <label className="fdp-form-label">Industry</label>
+                                <select name="industry" className="fdp-form-input fdp-form-select" value={profile.industry} onChange={handleChange}>
+                                    {['Technology', 'Healthcare', 'Finance', 'E-commerce', 'Education', 'Marketing', 'Startup', 'Other',].map((opt, i) => (
                                         <option key={i} value={opt}>{opt}</option>
                                     ))}
                                 </select>
                             </div>
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Company Description</label>
-                            <textarea className="form-input form-textarea" defaultValue="TechVista is building AI-powered analytics tools that help businesses make smarter decisions through data-driven insights."></textarea>
+                        <div className="fdp-form-group">
+                            <label className="fdp-form-label">Company Description</label>
+                            <textarea name="company_description" className="fdp-form-input fdp-form-textarea" value={profile.company_description} onChange={handleChange}></textarea>
                         </div>
+                    </div>
+
+                    <div className="fdp-save-btn-container">
+                        <button onClick={handleSave}>Save Profile Changes</button>
                     </div>
                 </div>
             </div>
-                    </div>
         </DashboardLayout>
     );
 };

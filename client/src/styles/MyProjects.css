@@ -173,14 +173,15 @@
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
-  font-weight: 10px;
+  font-weight: bold;
   margin-bottom: 20px;
 }
 
 .MyProjects-scope .status {
   background: #00ff3388;
-  color: #32547d;
+  color: #036a18;
   padding: 4px 10px;
+ font-weight: bold;
   border-radius: 14px;
   font-size: 12px;
 }

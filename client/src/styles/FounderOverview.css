@@ -9,10 +9,10 @@
 
 .founder-overview-container .overview-header {
   padding: 20px 10px;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 .founder-overview-container .overview-header h2 {
-  color: white;
+  color: rgb(0, 0, 0);
   margin-bottom: 8px;
 }
 .founder-overview-container .overview-header p {
@@ -144,7 +144,7 @@
 }
 
 .founder-overview-container .quick-actions > h3 {
-  color: white;
+  color: rgb(0, 0, 0);
   margin-bottom: 15px;
 }
 
@@ -166,7 +166,7 @@
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
-
+xa,pp
 /* HOVER EFFECT */
 .founder-overview-container .quick-card:hover {
   transform: translateY(-8px) scale(1.03);

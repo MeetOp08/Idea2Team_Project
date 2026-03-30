@@ -5,9 +5,10 @@ const multer = require("multer");
 const mysql = require("mysql2");
 const path = require("path");
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use("/public", express.static("public"));
 
 const db = mysql.createConnection({
@@ -245,6 +246,95 @@ app.post("/api/apply-project", (req, res) => {
     },
   );
 });
+// 23-03-2026 enter, update, and edit profile data 
+app.post("/api/profile", upload.single("image"), (req, res) => {
+  const {
+    user_id, title, location, bio,
+    contact_info, skills, experience,
+    github, linkedin
+  } = req.body;
+
+  const image = req.file ? req.file.filename : req.body.image;
+
+  const query = `
+        INSERT INTO profiles (
+            user_id, title, location, bio, 
+            contact_info, skills, experience, 
+            github, linkedin, image
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            title = VALUES(title),
+            location = VALUES(location),
+            bio = VALUES(bio),
+            contact_info = VALUES(contact_info),
+            skills = VALUES(skills),
+            experience = VALUES(experience),
+            github = VALUES(github),
+            linkedin = VALUES(linkedin),
+            image = VALUES(image)
+    `;
+
+  db.query(query, [
+    user_id, title, location, bio,
+    contact_info, skills, experience,
+    github, linkedin, image
+  ], (err) => {
+    if (err) {
+      console.error("SQL Error in Profile POST:", err);
+      return res.status(500).json({ message: "Error saving profile" });
+    }
+    res.json({ success: true, message: "Profile saved successfully" });
+  });
+});
+
+app.put("/api/profile/:user_id", (req, res) => {
+  const { user_id } = req.params;
+  const {
+    title, location, bio,
+    contact_info, skills, experience,
+    github, linkedin, image
+  } = req.body;
+
+  const query = `
+        UPDATE profiles
+        SET title = ?, location = ?, bio = ?, 
+            contact_info = ?, skills = ?, experience = ?, 
+            github = ?, linkedin = ?, image = ?
+        WHERE user_id = ?`;
+
+  db.query(query, [
+    title, location, bio,
+    contact_info, skills, experience,
+    github, linkedin, image,
+    user_id
+  ], (err, result) => {
+    if (err) {
+      console.error("SQL Error in Profile PUT:", err);
+      return res.status(500).json({ message: "Error updating profile" });
+    }
+    res.status(200).json({ success: true, message: "Profile updated successfully" });
+  });
+});
+
+app.get("/api/profile/:user_id", (req, res) => {
+  const { user_id } = req.params;
+
+  const query = `
+        SELECT users.full_name, users.email, profiles.*
+        FROM users
+        LEFT JOIN profiles ON users.user_id = profiles.user_id
+        WHERE users.user_id = ?
+    `;
+
+  db.query(query, [user_id], (err, result) => {
+    if (err) {
+      console.error("SQL Error in Profile GET:", err);
+      return res.status(500).json({ message: "Error fetching profile" });
+    }
+    res.status(200).json(result[0] || {});
+  });
+});
 app.get("/api/Manage-Users", (req, res) => {
   const query = `SELECT *FROM users`;
   db.query(query, (err, result) => {
@@ -436,7 +526,7 @@ app.get("/api/freelancer/myapplication/:id", (req, res) => {
   });
 });
 
-app.get("/api/founder/dashboard/:id",(req,res)=>{
+app.get("/api/founder/dashboard/:id", (req, res) => {
   const id = req.params.id;
   console.log(id);
   const query = `SELECT 
@@ -445,46 +535,82 @@ app.get("/api/founder/dashboard/:id",(req,res)=>{
   (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE founder_id=? ) AS totalApplications,
   (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id AND a.status='accepted' WHERE founder_id=?) AS acceptedFreelancers`;
 
-  db.query(query,[id,id,id,id],(err,result)=>{
-    if(err){
+  db.query(query, [id, id, id, id], (err, result) => {
+    if (err) {
       console.log(err);
       res.status(500).json({
-        message:"Error in Data fatching"
+        message: "Error in Data fatching"
       })
     }
     console.log(result)
     res.json({
-      success:true,
-      message:"Successfully fatched",
-      data:result[0]
+      success: true,
+      message: "Successfully fatched",
+      data: result[0]
     })
   })
 })
 
-app.get("/api/freelancer/dashboard/:id",(req,res)=>{
+app.get("/api/freelancer/dashboard/:id", (req, res) => {
   const freelancer_id = req.params.id;
 
   const query = `SELECT 
-                (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE freelancer_id=?) AS appliedProjects, 
-                (SELECT COUNT(*) FROM applications WHERE status="accepted" AND freelancer_id=?) AS acceptedProjects,
-                (SELECT COUNT(*) FROM applications WHERE status="rejected" AND freelancer_id=?) AS rejeted,
-                (SELECT COUNT(*) FROM applications WHERE status="pending" AND freelancer_id=?) AS pending,
-                (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id=p.project_id WHERE p.status="active" AND freelancer_id=?) AS activeProjects`;
-                
-  db.query(query,[freelancer_id,freelancer_id,freelancer_id,freelancer_id,freelancer_id],(err,result)=>{
-    if(err){
+                  (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE freelancer_id=?) AS appliedProjects, 
+                  (SELECT COUNT(*) FROM applications WHERE status="accepted" AND freelancer_id=?) AS acceptedProjects,
+                  (SELECT COUNT(*) FROM applications WHERE status="rejected" AND freelancer_id=?) AS rejetced,
+                  (SELECT COUNT(*) FROM applications WHERE status="pending" AND freelancer_id=?) AS pending,
+                  (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id=p.project_id WHERE p.status="active" AND freelancer_id=?) AS activeProjects`;
+
+  db.query(query, [freelancer_id, freelancer_id, freelancer_id, freelancer_id, freelancer_id], (err, result) => {
+    if (err) {
       console.log(err)
       res.status(500).json({
-        message:"Error occured during fatching data"
+        message: "Error occured during fatching data"
       })
     }
     res.json({
-      success:true,
-      message:"Successfully fatched",
-      data:result[0]
+      success: true,
+      message: "Successfully fatched",
+      data: result[0]
     })
   })
 })
+app.get("/api/admin/stats", (req, res) => {
+  const query = `SELECT 
+        (SELECT COUNT(*) FROM users) AS totalUsers,
+        (SELECT COUNT(*) FROM projects) AS totalProjects,
+        (SELECT COUNT(*) FROM projects WHERE status = 'active') AS activeProjects,
+        (SELECT COUNT(*) FROM applications) AS totalApplications,
+        (SELECT COUNT(*) FROM users WHERE role = 'freelancer') as totalFreelancers,
+        (SELECT COUNT(*) FROM users WHERE role = 'founder') as totalFounders,
+        (SELECT COUNT(*) FROM users WHERE status = 'blocked') as blockedUsers`;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Error fetching admin stats" });
+    }
+    res.json(result[0]);
+  });
+});
+
+app.get("/api/admin/recent-activity", (req, res) => {
+  const recentProjectsQuery = "SELECT title, created_at FROM projects ORDER BY created_at DESC LIMIT 5";
+  const recentUsersQuery = "SELECT full_name, role, created_at FROM users ORDER BY created_at DESC LIMIT 5";
+
+  db.query(recentProjectsQuery, (err, projectResults) => {
+    if (err) return res.status(500).json({ message: "Error fetching recent projects" });
+
+    db.query(recentUsersQuery, (err, userResults) => {
+      if (err) return res.status(500).json({ message: "Error fetching recent users" });
+
+      res.json({
+        recentProjects: projectResults,
+        recentUsers: userResults
+      });
+    });
+  });
+});
 app.put("/api/block-user/:id", (req, res) => {
   const userId = req.params.id;
 
@@ -605,121 +731,66 @@ app.delete("/api/project/:id", (req, res) => {
     res.json({ message: "Project deleted successfully" });
   });
 });
-
-// Profile Endpoints
-app.post("/api/profile", (req, res) => {
+app.post("/api/founder-profile", upload.single("image"), (req, res) => {
   const {
-    user_id,
-    title,
-    location,
-    bio,
-    contact_info,
-    skills,
-    experience,
-    github,
-    linkedin,
+    user_id, phone, location, bio,
+    company_name, company_website,
+    industry, company_size, company_description
   } = req.body;
 
-  const query = `
-      INSERT INTO profiles (
-          user_id, title, location, bio, 
-          contact_info, skills, experience, 
-          github, linkedin
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-          title = VALUES(title),
-          location = VALUES(location),
-          bio = VALUES(bio),
-          contact_info = VALUES(contact_info),
-          skills = VALUES(skills),
-          experience = VALUES(experience),
-          github = VALUES(github),
-          linkedin = VALUES(linkedin)
-  `;
-
-  db.query(
-    query,
-    [
-      user_id,
-      title,
-      location,
-      bio,
-      contact_info,
-      skills,
-      experience,
-      github,
-      linkedin,
-    ],
-    (err) => {
-      if (err) {
-        console.error("SQL Error in Profile POST:", err);
-        return res.status(500).json({ message: "Error saving profile" });
-      }
-      res.json({ success: true, message: "Profile saved successfully" });
-    },
-  );
-});
-
-app.put("/api/profile/:user_id", (req, res) => {
-  const { user_id } = req.params;
-  const {
-    title,
-    location,
-    bio,
-    contact_info,
-    skills,
-    experience,
-    github,
-    linkedin,
-  } = req.body;
+  // Use uploaded file filename if exists, otherwise keep existing image value
+  const image = req.file ? req.file.filename : req.body.image;
 
   const query = `
-      UPDATE profiles
-      SET title = ?, location = ?, bio = ?, 
-          contact_info = ?, skills = ?, experience = ?, 
-          github = ?, linkedin = ?
-      WHERE user_id = ?`;
+        INSERT INTO founder_profiles (
+            user_id, phone, location, bio, 
+            company_name, company_website, 
+            industry, company_size, company_description, image
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            phone = VALUES(phone),
+            location = VALUES(location),
+            bio = VALUES(bio),
+            company_name = VALUES(company_name),
+            company_website = VALUES(company_website),
+            industry = VALUES(industry),
+            company_size = VALUES(company_size),
+            company_description = VALUES(company_description),
+            image = VALUES(image)
+    `;
 
-  db.query(
-    query,
-    [
-      title,
-      location,
-      bio,
-      contact_info,
-      skills,
-      experience,
-      github,
-      linkedin,
-      user_id,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("SQL Error in Profile PUT:", err);
-        return res.status(500).json({ message: "Error updating profile" });
-      }
-      res
-        .status(200)
-        .json({ success: true, message: "Profile updated successfully" });
-    },
-  );
+  db.query(query, [
+    user_id, phone, location, bio,
+    company_name, company_website,
+    industry, company_size, company_description, image
+  ], (err) => {
+    if (err) {
+      console.error("SQL Error in Founder Profile POST:", err);
+      return res.status(500).json({ message: "Error saving founder profile" });
+    }
+    res.json({
+      success: true,
+      message: "Founder Profile saved successfully",
+      image: image
+    });
+  });
 });
 
-app.get("/api/profile/:user_id", (req, res) => {
+app.get("/api/founder-profile/:user_id", (req, res) => {
   const { user_id } = req.params;
 
   const query = `
-      SELECT users.full_name, users.email, profiles.*
-      FROM users
-      LEFT JOIN profiles ON users.user_id = profiles.user_id
-      WHERE users.user_id = ?
-  `;
+        SELECT users.full_name, users.email, founder_profiles.*
+        FROM users
+        LEFT JOIN founder_profiles ON users.user_id = founder_profiles.user_id
+        WHERE users.user_id = ?
+    `;
 
   db.query(query, [user_id], (err, result) => {
     if (err) {
-      console.error("SQL Error in Profile GET:", err);
-      return res.status(500).json({ message: "Error fetching profile" });
+      console.error("SQL Error in Founder Profile GET:", err);
+      return res.status(500).json({ message: "Error fetching founder profile" });
     }
     res.status(200).json(result[0] || {});
   });
