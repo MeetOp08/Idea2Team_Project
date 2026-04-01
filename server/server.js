@@ -611,6 +611,49 @@ app.get("/api/admin/recent-activity", (req, res) => {
     });
   });
 });
+app.get("/api/founder/dashboard/recent-freelancer/:id", (req, res) => {
+  const id = req.params.id;
+
+  const Query = `SELECT u.full_name,u.role,p.title,a.applied_at 
+  FROM users as u,projects as p ,applications as a 
+  WHERE u.user_id = a.freelancer_id 
+  AND p.project_id = a.project_id 
+  AND p.founder_id = ?
+  ORDER BY a.applied_at DESC LIMIT 4`;
+
+  db.query(Query, [id], (err, Results) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error fetching recent users"
+      });
+    }
+
+    return res.json({
+      data: Results
+    });
+  });
+});
+app.get("/api/freelancer/dashboard/recent-project/:id", (req, res) => {
+  const id = req.params.id;
+
+  const query = `SELECT p.title,p.created_at,p.required_skills,u.full_name 
+  FROM projects as p,users as u 
+  WHERE u.user_id = p.founder_id 
+  ORDER BY p.project_id DESC LIMIT 3;`;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error fetching recent projects"
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  });
+});
 app.put("/api/block-user/:id", (req, res) => {
   const userId = req.params.id;
 

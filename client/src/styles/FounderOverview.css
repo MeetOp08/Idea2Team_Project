@@ -1,3 +1,4 @@
+
 /* BACKGROUND */
 .founder-overview-container {
   font-family: 'Inter', sans-serif;
@@ -166,7 +167,6 @@
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
-xa,pp
 /* HOVER EFFECT */
 .founder-overview-container .quick-card:hover {
   transform: translateY(-8px) scale(1.03);
@@ -206,6 +206,89 @@ xa,pp
 .founder-overview-container .quick-card.primary p {
   color: #1e293b;
 }
+
+.freelancerlist-card {
+  background:linear-gradient(200deg,rgba(249, 249, 249, 0.647),rgba(0, 0, 255, 0.526));
+  border-radius: var(--admin-radius);
+  padding: 28px;
+  box-shadow: var(--admin-shadow);
+  border: 1px solid #20202020;
+  border-radius:10px;
+}
+
+.freelancerlist-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.freelancerlist-card-header h3 {
+  font-size: 28;
+  font-weight: 700;
+  color: black;
+  margin: 0;
+}
+
+/* Activity Lists */
+.freelancerlist-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.freelancerlist-activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 12px;
+  background: #ffffff29;
+  transition: background 0.2s;
+}
+
+.freelancerlist-activity-item:hover {
+  background: #ffffff;
+  transform:translateY(-6.14px);
+  span{
+    color:rgb(81, 81, 81)
+  };
+  p{
+    font-size:larger;
+  }
+}
+
+.freelancerlist-activity-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.freelancerlist-activity-details p {
+  font-weight: 600;
+  color:black;
+  margin: 0;
+  font-size: 14px;
+}
+
+.freelancerlist-activity-details span {
+  font-size: 12px;
+  color: rgb(249, 234, 234);
+}
+
+
+.freelancerlist-activity-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.freelancerlist-activity-tag.freelancer { background: #e0e7ff; color: #4338ca; }
+.freelancerlist-activity-tag.founder { background: #fef3c7; color: #92400e; }
+
 
 /* COOL GLOW EFFECT */
 .founder-overview-container .quick-card::before {

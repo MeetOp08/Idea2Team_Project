@@ -1,109 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import './sidebar.css';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
+import "../../styles/Sidebar.css";
+
+/* ✅ CORRECT ICONS */
+import {
+  HiBars3,
+  HiXMark,
+  HiChartBar,
+  HiUsers,
+  HiFolder,
+  HiClipboardDocumentList
+} from "react-icons/hi2";
 
 const sidebarMenus = {
-    admin: {
-        title: 'Admin',
-        sections: [
-            {
-                label: 'Dashboard',
-                items: [
-                    { icon: '📊', text: 'Overview', path: '/dashboard' },
-                ],
-            },
-            {
-                label: 'Management',
-                items: [
-                    { icon: '👥', text: 'Manage Users', path: '/users' },
-                    { icon: '📁', text: 'Manage Projects', path: '/projects' },
-                    { icon: '📋', text: 'Reports', path: '/reports' },
-                ],
-            },
-        ],
-    },
+  admin: {
+    sections: [
+      {
+        label: "Dashboard",
+        items: [
+          { icon: <HiChartBar />, text: "Overview", path: "/dashboard" }
+        ]
+      },
+      {
+        label: "Management",
+        items: [
+          { icon: <HiUsers />, text: "Manage Users", path: "/users" },
+          { icon: <HiFolder />, text: "Manage Projects", path: "/projects" },
+          { icon: <HiClipboardDocumentList />, text: "Reports", path: "/reports" }
+        ]
+      }
+    ]
+  }
 };
 
 const Sidebar = ({ role = "admin", collapsed = false, onToggle }) => {
 
-    const location = useLocation();
-    const menu = sidebarMenus[role];
+  const location = useLocation();
+  const menu = sidebarMenus[role];
 
-    const [user, setUser] = useState({});
+  const [user, setUser] = useState({});
 
-    useEffect(() => {
+  useEffect(() => {
+    const adminId = sessionStorage.getItem("admin_id");
 
-        const adminId = sessionStorage.getItem("admin_id");
+    axios.get(`http://localhost:1337/api/admininfo/${adminId}`)
+      .then(res => setUser(res.data.data || {}))
+      .catch(err => console.log(err));
+  }, []);
 
-        axios.get(`http://localhost:1337/api/admininfo/${adminId}`)
-            .then(res => {
-                setUser(res.data.data || {});
-            })
-            .catch(err => console.log(err));
+  const getInitials = (name) => {
+    if (!name) return "A";
+    return name.split(" ").map(n => n[0]).join("").toUpperCase();
+  };
 
-    }, []);
+  return (
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
 
-    const getInitials = (name) => {
-        if (!name) return "A";
-        return name
-            .split(" ")
-            .map(n => n[0])
-            .join("")
-            .toUpperCase();
-    };
+      {/* ✅ FIXED TOGGLE */}
+      <button className="sidebar-toggle" onClick={onToggle}>
+        {collapsed ? <HiBars3 /> : <HiBars3 />}
+      </button>
 
-    return (
+      <nav className="sidebar-nav">
+        {menu.sections.map((section, si) => (
+          <div className="sidebar-section" key={si}>
 
-        <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+            <p className="sidebar-section-title">{section.label}</p>
 
-             <button className="sidebar-toggle" onClick={onToggle}>
-☰
-</button>
+            {section.items.map((item, ii) => (
+              <Link
+                key={ii}
+                to={item.path}
+                className={`sidebar-link ${
+                  location.pathname === item.path ? "active" : ""
+                }`}
+              >
+                <span className="sidebar-icon">{item.icon}</span>
+                <span className="sidebar-text">{item.text}</span>
+              </Link>
+            ))}
 
-<br/>
+          </div>
+        ))}
+      </nav>
 
-            <nav className="sidebar-nav">
-                {menu.sections.map((section, si) => (
-                    <div className="sidebar-section" key={si}>
-                        <p className="sidebar-section-label">{section.label}</p>
+      {/* Footer */}
+      <div className="sidebar-footer">
+        <div className="sidebar-user">
 
-                        {section.items.map((item, ii) => (
-                            <Link
-                                key={ii}
-                                to={item.path}
-                                className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
-                            >
-                                <span className="sidebar-item-icon">{item.icon}</span>
-                                <span className="sidebar-item-text">{item.text}</span>
-                            </Link>
-                        ))}
-                    </div>
-                ))}
-            </nav>
+          <div className="sidebar-avatar">
+            {getInitials(user.name)}
+          </div>
 
-            <div className="sidebar-footer">
-                <div className="sidebar-user">
+          <div className="sidebar-user-info">
+            <p className="sidebar-user-name">{user.name || "Admin"}</p>
+            <p className="sidebar-user-role">{user.role || "Administrator"}</p>
+          </div>
 
-                    <div className="sidebar-user-avatar">
-                        {getInitials(user.name)}
-                    </div>
+        </div>
+      </div>
 
-                    <div className="sidebar-user-info">
-                        <p className="sidebar-user-name">
-                            {user.name || "Admin"}
-                        </p>
-
-                        <p className="sidebar-user-role">
-                            {user.role || "Administrator"}
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-
-        </aside>
-    );
+    </aside>
+  );
 };
 
 export default Sidebar;

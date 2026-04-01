@@ -13,9 +13,15 @@ const FreelancerOverview = () => {
     pending: 0,
     activeProjects: 0
   })
+  const [recentproject,setRecentProject]= useState([]);
+  const formatTime = (dateString) =>{
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+  }
   const navigate = useNavigate();
   const freelancer_id = sessionStorage.getItem("user_id");
   console.log(freelancer_id)
+
   useEffect(() => {
     axios.get(`http://localhost:1337/api/freelancer/dashboard/${freelancer_id}`)
       .then(res => {
@@ -23,6 +29,11 @@ const FreelancerOverview = () => {
         setProjects(res.data.data)
       })
       .catch(err => console.log(err))
+      axios.get(`http://localhost:1337/api/freelancer/dashboard/recent-project/${freelancer_id}`)
+      .then(res=>{
+        console.log(res.data)
+        setRecentProject(res.data.data)
+      }).catch(err=>console.log(err))
   }, [freelancer_id])
 
   return (
@@ -90,12 +101,74 @@ const FreelancerOverview = () => {
             </div>
 
           </div>
+          
         </div>
 
-      </div>
 
+      
+
+        {/* {recent project} */}
+      <div className="recentproject-list">
+        <div className="projectlist-card-header">
+          <div className="icon">📂</div>
+          <h3>Recent Projects</h3>
+   
+  </div>
+<div className="projectlist-card">
+  
+  <div className="projectlist-activity-list">
+    
+    {recentproject && recentproject.length > 0 ? (
+      recentproject.map((val, i) => (
+        <div key={i} className="projectlist-activity-items" >
+          
+          <div className="projectlist-activity-main" >
+            
+            <div className="project-activity-details">
+              <p>{val.title}</p>
+              <span>
+                Post On: {formatTime(val.created_at)}
+              </span>
+            </div>
+
+            <div className="founder_name">
+              <strong><p>Founder</p></strong>
+              <span>{val.full_name}</span>
+            </div>
+
+          </div>
+
+          <span
+            className={`req_skills ${
+              val.required_skills
+                ? val.required_skills.toLowerCase().replace(/\s+/g, "")
+                : ""
+            }`}
+          >
+            {val.required_skills || "No Skills"}
+          </span>
+
+        </div>
+      ))
+    ) : (
+      <p style={{ textAlign: "center", color: "#888" }}>
+        No recent projects found
+      </p>
+    )}
+
+  </div>
+</div>
+      </div>
+      </div>
+      
     </DashboardLayout>
   );
 };
 
 export default FreelancerOverview;
+           
+              
+          
+               
+               
+  

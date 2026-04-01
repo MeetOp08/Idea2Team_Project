@@ -19,21 +19,35 @@
   z-index: 200;
 }
 
-/* ================= COLLAPSED ================= */
+/* Collapsed */
 .sidebar.collapsed {
   width: var(--sidebar-collapsed);
 }
 
-/* ================= TOGGLE BUTTON ================= */
+/* ================= TOGGLE ================= */
 .sidebar-toggle {
-  background: var(--primary);
+  width: 45px;
+  height: 45px;
+
   border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
-  font-size: 18px;
-  padding: 8px 10px;
-  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
   cursor: pointer;
+
   margin-bottom: 20px;
+  transition: 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.1);
 }
 
 /* ================= NAV ================= */
@@ -47,7 +61,7 @@
   margin-bottom: 20px;
 }
 
-/* Section Title */
+/* Title */
 .sidebar-section-title {
   font-size: 12px;
   color: #94a3b8;
@@ -55,7 +69,7 @@
   padding-left: 8px;
 }
 
-/* Hide title when collapsed */
+/* Hide when collapsed */
 .sidebar.collapsed .sidebar-section-title {
   display: none;
 }
@@ -92,18 +106,18 @@
   display: flex;
   align-items: center;
 }
+
 /* Text */
 .sidebar-text {
   font-size: 14px;
   font-weight: 500;
 }
 
-/* Hide text when collapsed */
+/* Collapse */
 .sidebar.collapsed .sidebar-text {
   display: none;
 }
 
-/* Center icons when collapsed */
 .sidebar.collapsed .sidebar-link {
   justify-content: center;
 }
@@ -114,44 +128,12 @@
   padding-top: 15px;
 }
 
-/* User */
 .sidebar-user {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.sidebar-toggle {
-  width: 45px;
-  height: 45px;
 
-  border: none;
-  border-radius: 12px;
-
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 22px;
-  cursor: pointer;
-
-  transition: all 0.3s ease;
-
-  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
-}
-
-/* Hover */
-.sidebar-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
-}
-
-/* Click */
-.sidebar-toggle:active {
-  transform: scale(0.95);
-}
 /* Avatar */
 .sidebar-avatar {
   width: 40px;
@@ -159,6 +141,7 @@
   border-radius: 10px;
 
   background: linear-gradient(135deg, #6366f1, #22c55e);
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,24 +156,22 @@
   flex-direction: column;
 }
 
-/* Hide user info when collapsed */
+/* Hide info when collapsed */
 .sidebar.collapsed .sidebar-user-info {
   display: none;
 }
 
-/* Name */
 .sidebar-user-name {
   font-size: 14px;
   font-weight: 600;
 }
 
-/* Role */
 .sidebar-user-role {
   font-size: 12px;
   color: #94a3b8;
 }
 
-/* ================= SCROLLBAR ================= */
+/* Scroll */
 .sidebar-nav::-webkit-scrollbar {
   width: 4px;
 }

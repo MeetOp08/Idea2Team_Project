@@ -3,38 +3,50 @@ import { Link } from "react-router-dom";
 import "../../styles/Topbar.css";
 
 const Topbar = ({ collapsed = false }) => {
+
   const role = sessionStorage.getItem("role");
 
-  return (
-    <header className={`app-topbar ${collapsed ? "app-topbar-collapsed" : ""}`}>
-      
-      <div className="app-topbar-left">
-        
-        <div className="app-topbar-brand">
-          <div className="app-topbar-logo">I2</div>
+  const handleLogout = () => {
+    sessionStorage.clear();
+    window.location.replace("/login");
+  };
 
-          <Link
-            to={role === "founder" ? "/founder/dashboard" : "/freelancer/dashboard"}
-            className="app-topbar-title"
-          >
+  const dashboardRoute =
+    role === "founder"
+      ? "/founder/dashboard"
+      : role === "freelancer"
+      ? "/freelancer/dashboard"
+      : "/admin/dashboard";
+
+  return (
+    <header className={`topbar ${collapsed ? "collapsed" : ""}`}>
+
+      {/* LEFT */}
+      <div className="topbar-left">
+        <div className="topbar-brand">
+
+          <div className="topbar-logo">I2</div>
+
+          <Link to={dashboardRoute} className="topbar-title">
             Idea2Team
           </Link>
-        </div>
 
+        </div>
       </div>
 
-      <div className="app-topbar-right">
+      {/* RIGHT */}
+      <div className="topbar-right">
 
-        <button className="app-topbar-btn">
+        <button className="topbar-btn">
           🔔
-          <span className="app-topbar-dot"></span>
+          <span className="topbar-dot"></span>
         </button>
 
-        <button className="app-topbar-btn">
+        <button className="topbar-btn">
           💬
         </button>
 
-        <button className="app-topbar-logout">
+        <button className="topbar-logout" onClick={handleLogout}>
           Logout
         </button>
 

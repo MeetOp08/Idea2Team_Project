@@ -1,33 +1,87 @@
+/* ================= ROOT VARIABLES ================= */
+:root {
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 80px;
 
-/* ── Dashboard Layout ── */
+  --topbar-height: 60px;
+
+  --bg-main: #f9fafb;
+  --bg-soft: #f1f5f9;
+
+  --text-main: #111827;
+  --text-muted: #6b7280;
+
+  --border: #e5e7eb;
+
+  --primary: #4f46e5;
+
+  --radius: 14px;
+}
+
+/* ================= MAIN LAYOUT ================= */
 .dashboard-layout {
-    display: flex;
-    min-height: 100vh;
-    background: var(--gray-50);
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-main);
 }
 
+/* ================= MAIN CONTENT ================= */
 .dashboard-main {
-    flex: 1;
-    margin-left: var(--sidebar-width);
-    transition: margin-left var(--transition-base);
+  flex: 1;
+  margin-left: var(--sidebar-width); /* ✅ important */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
 }
 
+/* When sidebar collapsed */
 .dashboard-main.sidebar-collapsed {
-    margin-left: var(--sidebar-collapsed);
+  margin-left: var(--sidebar-collapsed);
 }
 
+/* ================= TOPBAR FIX ================= */
+.topbar {
+  height: var(--topbar-height);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+}
+
+/* ================= CONTENT ================= */
 .dashboard-content {
-    padding: var(--space-8);
-    padding-top: calc(var(--topbar-height) + var(--space-8));
-    min-height: 100vh;
+  flex: 1;
+  padding: 25px;
+  background: var(--bg-main);
+  margin-top:80px
 }
 
-@media (max-width: 1024px) {
-    .dashboard-main { margin-left: 0; }
+/* ================= FOOTER ================= */
+footer {
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  background: #fff;
 }
+
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
-    .dashboard-content {
-        padding: var(--space-4);
-        padding-top: calc(var(--topbar-height) + var(--space-4));
-    }
+  .dashboard-main {
+    margin-left: 0; /* mobile full width */
+  }
+
+  .dashboard-content {
+    padding: 15px;
+  }
 }

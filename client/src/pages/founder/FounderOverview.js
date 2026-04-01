@@ -1,5 +1,5 @@
 import {useState,useEffect} from 'react';
-import {useNavigate} from "react-router-dom"
+import {useNavigate,Link} from "react-router-dom"
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import axios from "axios";
 import "../../styles/FounderOverview.css"
@@ -12,6 +12,12 @@ const FounderOverview = () => {
         totalApplications:0,
         acceptedFreelancers:0
     })
+      const [recentData, setRecentData] = useState({});
+          const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+    
     const navigate = useNavigate();
 
     const founder_id = sessionStorage.getItem("user_id");
@@ -22,7 +28,16 @@ const FounderOverview = () => {
             setProjects(res.data.data)
         })
         .catch(err=>console.log(err))
+        
+        axios.get(`http://localhost:1337/api/founder/dashboard/recent-freelancer/${founder_id}`)
+        .then(res=>{
+            console.log(res.data)
+            setRecentData(res.data.data)
+        })
+        .catch(err=>console.log(err))
+
     },[founder_id]);
+
     return (
             
   <DashboardLayout  role="founder">
@@ -97,7 +112,31 @@ const FounderOverview = () => {
   </div>
 </div>
 
-    </div>
+<div className="recentfreelancer">
+  <div className="freelancerlist-card-header">
+  <h3>Latest Member Joinings</h3>
+     </div>
+      <div className="freelancerlist-card">
+     
+      <div className="freelancerlist-activity-list">
+          {recentData.length > 0 ? recentData.map((user, i) => (
+          <div key={i} className="freelancerlist-activity-item">
+             <div className="freelancerlist-activity-main">
+          
+                <div className="freelancerlist-activity-details">
+                      <p>{user.full_name}</p>
+                      <span>Joined on {formatTime(user.applied_at)}</span>
+                </div>
+                </div>
+                    <span className={`freelancerlist-activity-tag ${user.role}`}>
+                        {user.role}
+                    </span>
+                </div>
+              )) : <p style={{ textAlign: 'center', color: '#64748b' }}>No recent users.</p>}
+        </div>
+   </div>    
+   </div>                                       
+  </div>
   </DashboardLayout>
 );
 

@@ -2,7 +2,7 @@ import '../../styles/Sidebar.css';
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import "./sidebar.css";
+import "../../styles/Sidebar.css";
 
 const sidebarMenus = {
 
@@ -110,7 +110,7 @@ return(
 <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
 
 <button className="sidebar-toggle" onClick={onToggle}>
-☰
+  ☰
 </button>
 
 <br/>

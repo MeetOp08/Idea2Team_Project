@@ -16,10 +16,10 @@ const AdminOverview = () => {
         blockedUsers: 0
     });
 
-    const [recentData, setRecentData] = useState({
-        recentProjects: [],
-        recentUsers: []
-    });
+        const [recentData, setRecentData] = useState({
+            recentProjects: [],
+            recentUsers: []
+        });
 
     const [loading, setLoading] = useState(true);
 
