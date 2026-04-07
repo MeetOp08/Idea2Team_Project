@@ -68,6 +68,61 @@ const Invitations = () => {
     }
   };
 
+  const handleViewProject = async (projectId) => {
+    try {
+      Swal.fire({
+        title: 'Loading Details...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      const res = await axios.get(`http://localhost:1337/api/info-projects/${projectId}`);
+      const project = res.data.data;
+      
+      Swal.fire({
+        title: project.title,
+        html: `
+          <div style="text-align: left; font-family: 'Inter', sans-serif;">
+            <p><strong>Category:</strong> ${project.category}</p>
+            <p><strong>Experience Required:</strong> ${project.experience_level}</p>
+            <p><strong>Budget:</strong> ₹${project.budget_min} - ₹${project.budget_max}</p>
+            <p><strong>Duration:</strong> ${project.duration_weeks} weeks</p>
+            <hr style="border-top: 1px solid #e5e7eb; border-bottom: none; border-left: none; border-right: none; margin: 15px 0;" />
+            <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #334155;">Description:</h4>
+            <p style="white-space: pre-wrap; color: #475569; font-size: 14px; margin-bottom: 20px;">${project.description}</p>
+            
+            <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #334155;">Required Skills:</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              ${(project.required_skills || '')
+                .split(',')
+                .filter(skill => skill.trim() !== '')
+                .map(skill => `<span style="background: #eef2ff; color: #4f46e5; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500;">${skill.trim()}</span>`)
+                .join('')}
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Apply to Project',
+        cancelButtonText: 'Close',
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#94a3b8',
+        width: '600px',
+        customClass: {
+          title: 'swal2-title-custom'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/apply-project/" + projectId);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error', 'Unable to fetch project details', 'error');
+    }
+  };
+
   return (
     <DashboardLayout role="freelancer">
       <div className="inv-page">
@@ -139,9 +194,7 @@ const Invitations = () => {
                   <button
                     className="btn outline"
                     style={{ width: '100%', justifyContent: 'center' }}
-                    onClick={() =>
-                      navigate("/apply-project/" + inv.project_id)
-                    }
+                    onClick={() => handleViewProject(inv.project_id)}
                   >
                     <Eye size={16} strokeWidth={2.5} /> View Details
                   </button>
