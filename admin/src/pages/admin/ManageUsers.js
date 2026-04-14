@@ -83,11 +83,12 @@ const handleBlock = (id) => {
                                 <td>{val.phone}</td>
                                 <td>
                                    
-                                    <button className="action-btn delete" onClick={()=>{handleBlock(val.user_id)}}>{
+                                    <button className="action-btn delete" onClick={()=>{handleBlock(val.user_id)}}
+                                        style={{backgroundColor:val.status === "active"? "red" : "green", color:"white" , width:"70%"}}>{                                    
                                     val.status  === "active" ? "Block" : "Unblock"
                                     }</button>
                                 </td>
-                                <td>{val.status}</td>
+                                <td><p style={{backgroundColor:val.status === "active"? "green" : "red", color:"white",width:"100%",textAlign:"center",borderRadius:"6px"}} >{val.status}</p></td>
                             </tr>
                        ))}
                     </tbody>

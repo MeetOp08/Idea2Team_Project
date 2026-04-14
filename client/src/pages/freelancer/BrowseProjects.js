@@ -56,6 +56,10 @@ const BrowseProjects = () => {
         navigate(`/apply-project/${id}`);
     };
 
+    const[search,setSearch] = useState("");
+    const filter = projects.filter((val)=>{
+        return val.title.toLowerCase().includes(search.toLowerCase()) || val.required_skills.toLowerCase().includes(search.toLowerCase())
+    })
     return (
         <DashboardLayout role="freelancer">
             <div className="BrowseProjects-scope">
@@ -69,15 +73,15 @@ const BrowseProjects = () => {
 
             {/* SEARCH BAR */}
             <div className="table-container">
-                <SearchBar placeholder="Search projects by title, skill, or company..." style={{ flex: 1 }} />
+                <SearchBar placeholder="Search projects by title, skill, or company..." style={{ flex: 1 }} value={search} onChange={(e)=>setSearch(e.target.value)}/>
             </div>
 
             {/* PROJECT CARDS */}
             <div className="projects-grid">
-                {projects.length === 0 ? (
+                {filter.length === 0 ? (
                     <p>No projects available.</p>
                 ) : (
-                    projects.map((val) => {
+                    filter.map((val) => {
                         const isExpanded = expanded[val.project_id];
                         const description = val.description ? (isExpanded ? val.description : val.description.slice(0, 120) + "...") : "";
 
@@ -120,9 +124,18 @@ const BrowseProjects = () => {
                                     <strong>Duration:</strong> {val.duration_weeks} weeks
                                 </p>
 
-                                <p className="project-team">
-                                    <strong>Team Required:</strong> {val.team_members_required} freelancers
-                                </p>
+                                <div className="project-team" style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '15px 0' }}>
+                                    <div style={{ flex: 1, background: '#e2e8f0', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                                        <div style={{ 
+                                            width: `${Math.min(((val.members_joined || 0) / (val.team_members_required || 1)) * 100, 100)}%`, 
+                                            background: val.members_joined >= val.team_members_required ? '#10b981' : '#6366f1', 
+                                            height: '100%', borderRadius: '4px', transition: 'width 0.3s ease' 
+                                        }}></div>
+                                    </div>
+                                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4b5563', whiteSpace: 'nowrap' }}>
+                                        {val.members_joined || 0} / {val.team_members_required} Members Joined
+                                    </div>
+                                </div>
 
                                 <div className="status-line">
                                     Status: <span className="status active">{val.status || 'Active'}</span>

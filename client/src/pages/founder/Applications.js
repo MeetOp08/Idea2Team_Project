@@ -77,7 +77,7 @@ useEffect(()=>{
             <tbody>
                 {application.map((val,index)=>{
                     return(
-                        <tr>
+                        <tr key={val.application_id || index}>
                             <td>{index+1}</td>
                             <td>{val.full_name}</td>
                             <td>{val.title}</td>

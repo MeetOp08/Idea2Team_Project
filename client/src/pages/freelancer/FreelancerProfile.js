@@ -259,7 +259,7 @@ const FreelancerProfile = () => {
                             <div className="fp-form-group">
                                 <label className="fp-form-label">GitHub URL  {
                                     profile.github && (
-                                        <a href={profile.github}
+                                        <a href={profile.github || undefined}
                                             target="_blank"
                                             rel ="nooper noreferrer">
                                           🔗view 
@@ -274,14 +274,14 @@ const FreelancerProfile = () => {
                             <div className="fp-form-group">
                                 <label className="fp-form-label">LinkedIn URL {
                                     profile.linkedin && (
-                                        <a href={profile.linkedin}
+                                        <a href={profile.linkedin || undefined}
                                             target="_blank"
                                             rel ="nooper noreferrer">
                                           🔗view 
                                         </a>
                                     )
                                 }</label>
-                                <input href={profile.linkedin} name="linkedin" type="url" className="fp-form-input" value={profile.linkedin} onChange={handleChange} placeholder="https://linkedin.com/in/username" readOnly={isPublicView} />
+                                <input name="linkedin" type="url" className="fp-form-input" value={profile.linkedin} onChange={handleChange} placeholder="https://linkedin.com/in/username" readOnly={isPublicView} />
                             </div>
 
 
@@ -289,7 +289,7 @@ const FreelancerProfile = () => {
                                 <label className="fp-form-label">Portfolio URL {
                                   
                                     profile.portfolio && (
-                                        <a href={profile.portfolio}
+                                        <a href={profile.portfolio || undefined}
                                             target="_blank"
                                             rel ="nooper noreferrer">
                                           🔗view 
@@ -301,7 +301,7 @@ const FreelancerProfile = () => {
                             <div className="fp-form-group">
                                 <label className="fp-form-label">{isPublicView ? "Resume" : "Add resume"} {
                                     profile.resume && (
-                                        <a href={`http://localhost:1337/public/${profile.resume}`}
+                                        <a href={profile.resume ? `http://localhost:1337/public/${profile.resume}` : undefined}
                                             target="_blank"
                                             rel="noreferrer">
                                           🔗view 

@@ -4,7 +4,18 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const mysql = require("mysql2");
 const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -446,7 +457,12 @@ app.get("/api/myProject/:id", (req, res) => {
 
   console.log("Founder ID:", founder_id);
 
-  const query = "SELECT * FROM projects WHERE founder_id=?";
+  const query = `
+    SELECT p.*, 
+    (SELECT COUNT(*) FROM applications a WHERE a.project_id = p.project_id AND a.status = 'accepted') AS members_joined 
+    FROM projects p 
+    WHERE p.founder_id=?
+  `;
 
   db.query(query, [founder_id], (err, result) => {
     if (err) {
@@ -502,9 +518,10 @@ app.get("/api/editproject/:id", (req, res) => {
 });
 app.get("/api/projects", (req, res) => {
   const query = `
-        SELECT projects.*, users.full_name AS founder_name
-        FROM projects
-        JOIN users ON projects.founder_id = users.user_id WHERE projects.status = 'active'
+        SELECT p.*, users.full_name AS founder_name,
+        (SELECT COUNT(*) FROM applications a WHERE a.project_id = p.project_id AND a.status = 'accepted') AS members_joined
+        FROM projects p
+        JOIN users ON p.founder_id = users.user_id WHERE p.status = 'active'
     `;
 
   db.query(query, (err, result) => {
@@ -605,30 +622,34 @@ app.get("/api/founder/dashboard/:id", (req, res) => {
   })
 })
 
-app.get("/api/freelancer/dashboard/:id", (req, res) => {
-  const freelancer_id = req.params.id;
+  app.get("/api/freelancer/dashboard/:id", (req, res) => {
+    const freelancer_id = req.params.id;
 
-  const query = `SELECT 
-                  (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE freelancer_id=?) AS appliedProjects, 
-                  (SELECT COUNT(*) FROM applications WHERE status="accepted" AND freelancer_id=?) AS acceptedProjects,
-                  (SELECT COUNT(*) FROM applications WHERE status="rejected" AND freelancer_id=?) AS rejected,
-                  (SELECT COUNT(*) FROM applications WHERE status="pending" AND freelancer_id=?) AS pending,
-                  (SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id=p.project_id WHERE p.status="active" AND freelancer_id=?) AS activeProjects`;
+    const query = `SELECT 
+                    (SELECT COUNT(*) FROM applications WHERE freelancer_id=?) AS appliedProjects, 
+                    ((SELECT COUNT(*) FROM applications WHERE status="accepted" AND freelancer_id=?) + 
+                     (SELECT COUNT(*) FROM invitations WHERE status="accepted" AND freelancer_id=?)) AS acceptedProjects,
+                    ((SELECT COUNT(*) FROM applications WHERE status="rejected" AND freelancer_id=?) + 
+                     (SELECT COUNT(*) FROM invitations WHERE status="rejected" AND freelancer_id=?)) AS rejected,
+                    ((SELECT COUNT(*) FROM applications WHERE status="pending" AND freelancer_id=?) + 
+                     (SELECT COUNT(*) FROM invitations WHERE status="pending" AND freelancer_id=?)) AS pending,
+                    ((SELECT COUNT(*) FROM applications a JOIN projects p ON a.project_id=p.project_id WHERE p.status="active" AND a.status="accepted" AND a.freelancer_id=?) + 
+                     (SELECT COUNT(*) FROM invitations i JOIN projects p ON i.project_id=p.project_id WHERE p.status="active" AND i.status="accepted" AND i.freelancer_id=?)) AS activeProjects`;
 
-  db.query(query, [freelancer_id, freelancer_id, freelancer_id, freelancer_id, freelancer_id], (err, result) => {
-    if (err) {
-      console.log(err)
-      res.status(500).json({
-        message: "Error occured during fatching data"
+    db.query(query, Array(9).fill(freelancer_id), (err, result) => {
+      if (err) {
+        console.log(err)
+        res.status(500).json({
+          message: "Error occured during fatching data"
+        })
+      }
+      res.json({
+        success: true,
+        message: "Successfully fatched",
+        data: result[0]
       })
-    }
-    res.json({
-      success: true,
-      message: "Successfully fatched",
-      data: result[0]
     })
   })
-})
 app.get("/api/admin/stats", (req, res) => {
   const query = `SELECT 
         (SELECT COUNT(*) FROM users) AS totalUsers,
@@ -787,17 +808,38 @@ app.put("/api/founder/edit-project/:id", (req, res) => {
 
 app.put("/api/application/accept/:id", (req, res) => {
   const applicationId = req.params.id;
-  console.log("Application ID:", applicationId);
-  const query =
-    "UPDATE applications SET status = 'accepted' WHERE application_id = ?";
+  const query = "UPDATE applications SET status = 'accepted' WHERE application_id = ?";
+  
   db.query(query, [applicationId], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res
-        .status(500)
-        .json({ message: "Error updating application status" });
-    }
-    res.json({ success: true, message: "Application accepted successfully" });
+    if (err) return res.status(500).json({ message: "Error updating application status" });
+
+    // Auto-Workspace logic
+    db.query("SELECT a.project_id, a.freelancer_id, p.founder_id, p.title FROM applications a JOIN projects p ON a.project_id = p.project_id WHERE a.application_id = ?", [applicationId], (err, appData) => {
+      if (err || appData.length === 0) return res.json({ success: true, message: "Application accepted successfully" });
+      const { project_id, freelancer_id, founder_id, title } = appData[0];
+      
+      // Check if workspace exists
+      db.query("SELECT workspace_id FROM workspaces WHERE project_id = ?", [project_id], (err, wsData) => {
+        if (wsData && wsData.length > 0) {
+          // Workspace exists => add freelancer
+          const workspace_id = wsData[0].workspace_id;
+          db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'member') ON DUPLICATE KEY UPDATE role='member'", [workspace_id, freelancer_id], () => {});
+        } else {
+          // Workspace doesn't exist => create it
+          db.query("INSERT INTO workspaces (project_id, owner_id, name, description) VALUES (?, ?, ?, ?)", [project_id, founder_id, `Workspace for ${title}`, `Auto-generated workspace for ${title}`], (err, insertRes) => {
+            if (!err) {
+              const newWorkspaceId = insertRes.insertId;
+              // Add founder as admin
+              db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'admin')", [newWorkspaceId, founder_id], () => {});
+              // Add freelancer as member
+              db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'member')", [newWorkspaceId, freelancer_id], () => {});
+            }
+          });
+        }
+      });
+    });
+
+    res.json({ success: true, message: "Application accepted successfully!" });
   });
 });
 
@@ -1221,8 +1263,233 @@ app.get("/api/recommended-projects/:freelancer_id", (req, res) => {
 });
 
 
-const PORT = 1337;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// ================== WORKSPACE APIs ==================
+app.post("/api/workspace/create", (req, res) => {
+    const { project_id, owner_id, name, description, selected_users } = req.body;
+    db.query(
+        "INSERT INTO workspaces (project_id, owner_id, name, description) VALUES (?, ?, ?, ?)",
+        [project_id, owner_id, name, description],
+        (err, result) => {
+            if (err) return res.status(500).json({ message: "Error creating workspace", error: err });
+            const workspace_id = result.insertId;
+            
+            db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'admin')", [workspace_id, owner_id], (err) => {
+                if (err) return res.status(500).json({ message: "Error adding admin" });
+                
+                if (selected_users && selected_users.length > 0) {
+                    const memberValues = selected_users.map(userId => [workspace_id, userId, 'member']);
+                    db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES ?", [memberValues], (err) => {
+                        if (err) return res.status(500).json({ message: "Error adding members" });
+                        res.status(201).json({ success: true, workspace_id });
+                    });
+                } else {
+                    res.status(201).json({ success: true, workspace_id });
+                }
+            });
+        }
+    );
 });
 
+app.get("/api/workspace/:id", (req, res) => {
+    db.query("SELECT * FROM workspaces WHERE workspace_id = ?", [req.params.id], (err, results) => {
+        if (err || results.length === 0) return res.status(404).json({ message: "Workspace not found" });
+        res.json({ success: true, data: results[0] });
+    });
+});
+
+app.get("/api/workspace/members/:id", (req, res) => {
+    const query = `
+        SELECT wm.id, wm.user_id, wm.role, wm.joined_at, u.full_name, u.email 
+        FROM workspace_members wm 
+        JOIN users u ON wm.user_id = u.user_id 
+        WHERE wm.workspace_id = ?
+    `;
+    db.query(query, [req.params.id], (err, results) => {
+        if (err) return res.status(500).json({ message: "Error fetching members" });
+        res.json({ success: true, data: results });
+    });
+});
+
+app.post("/api/tasks/create", (req, res) => {
+    const { workspace_id, title, description, assigned_to, deadline } = req.body;
+    db.query(
+        "INSERT INTO tasks (workspace_id, title, description, assigned_to, deadline) VALUES (?, ?, ?, ?, ?)",
+        [workspace_id, title, description, assigned_to, deadline],
+        (err) => {
+            if (err) return res.status(500).json({ message: "Error creating task" });
+            res.status(201).json({ success: true, message: "Task created" });
+        }
+    );
+});
+
+app.get("/api/tasks/:workspace_id", (req, res) => {
+    db.query(`
+        SELECT t.*, u.full_name as assigned_to_name 
+        FROM tasks t 
+        LEFT JOIN users u ON t.assigned_to = u.user_id 
+        WHERE t.workspace_id = ?
+    `, [req.params.workspace_id], (err, results) => {
+        if (err) return res.status(500).json({ message: "Error fetching tasks" });
+        res.json({ success: true, data: results });
+    });
+});
+
+app.put("/api/tasks/update-status", (req, res) => {
+    const { task_id, status } = req.body;
+    db.query("UPDATE tasks SET status = ? WHERE id = ?", [status, task_id], (err) => {
+        if (err) return res.status(500).json({ message: "Error updating task" });
+        res.json({ success: true, message: "Status updated" });
+    });
+});
+
+app.post("/api/chat/send", (req, res) => {
+    const { workspace_id, sender_id, message } = req.body;
+    db.query(
+        "INSERT INTO workspace_messages (workspace_id, sender_id, message) VALUES (?, ?, ?)",
+        [workspace_id, sender_id, message],
+        (err, result) => {
+            if (err) return res.status(500).json({ message: "Error sending message" });
+            
+            // Fetch the just-inserted message with user info to broadcast
+            db.query(`
+                SELECT wm.*, u.full_name as sender_name 
+                FROM workspace_messages wm 
+                JOIN users u ON wm.sender_id = u.user_id 
+                WHERE wm.id = ?
+            `, [result.insertId], (err, msgs) => {
+                if (!err && msgs.length > 0) {
+                    io.to(String(workspace_id)).emit("receive_message", msgs[0]);
+                }
+            });
+
+            res.status(201).json({ success: true, message: "Message sent" });
+        }
+    );
+});
+
+app.get("/api/chat/:workspace_id", (req, res) => {
+    db.query(`
+        SELECT wm.*, u.full_name as sender_name 
+        FROM workspace_messages wm 
+        JOIN users u ON wm.sender_id = u.user_id 
+        WHERE wm.workspace_id = ? 
+        ORDER BY wm.created_at ASC
+    `, [req.params.workspace_id], (err, results) => {
+        if (err) return res.status(500).json({ message: "Error fetching messages" });
+        res.json({ success: true, data: results });
+    });
+});
+
+app.get("/api/project/workspaces/:project_id", (req, res) => {
+    db.query("SELECT * FROM workspaces WHERE project_id = ?", [req.params.project_id], (err, results) => {
+        if (err) return res.status(500).json({ message: "Error fetching workspaces" });
+        res.json({ success: true, data: results });
+    });
+});
+
+app.get("/api/freelancer/workspaces/:freelancer_id", (req, res) => {
+    const query = `
+        SELECT w.*, p.title as project_title 
+        FROM workspaces w
+        JOIN workspace_members wm ON w.workspace_id = wm.workspace_id
+        JOIN projects p ON w.project_id = p.project_id
+        WHERE wm.user_id = ?
+    `;
+    db.query(query, [req.params.freelancer_id], (err, results) => {
+        if (err) return res.status(500).json({ message: "Error fetching user workspaces" });
+        res.json({ success: true, data: results });
+    });
+});
+
+// ==========================================
+// WORKSPACE FILE VAULT ROUTES
+// ==========================================
+
+const fs = require('fs');
+
+const workspaceStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = "./public/workspace";
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "_" + file.originalname);
+  },
+});
+const workspaceUpload = multer({ storage: workspaceStorage });
+
+app.post("/api/workspace/upload", workspaceUpload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+  const workspace_id = req.body.workspace_id;
+  const uploader_id = req.body.uploader_id;
+  const file_name = req.file.originalname;
+  const file_path = "/public/workspace/" + req.file.filename;
+  const file_size = req.file.size;
+
+  const query = "INSERT INTO workspace_files (workspace_id, uploader_id, file_name, file_path, file_size) VALUES (?, ?, ?, ?, ?)";
+  db.query(query, [workspace_id, uploader_id, file_name, file_path, file_size], (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Database Error" });
+    }
+    res.json({ success: true, message: "File uploaded successfully" });
+  });
+});
+
+app.get("/api/workspace/files/:workspace_id", (req, res) => {
+  const query = `
+    SELECT f.*, u.full_name as uploader_name 
+    FROM workspace_files f
+    JOIN users u ON f.uploader_id = u.user_id
+    WHERE f.workspace_id = ?
+    ORDER BY f.created_at DESC
+  `;
+  db.query(query, [req.params.workspace_id], (err, results) => {
+    if (err) return res.status(500).json({ message: "Error fetching files" });
+    res.json({ success: true, data: results });
+  });
+});
+
+app.delete("/api/workspace/file/:id", (req, res) => {
+  db.query("DELETE FROM workspace_files WHERE id = ?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ message: "Error deleting file" });
+    res.json({ success: true, message: "File deleted successfully" });
+  });
+});
+
+// Fetch all freelancers for dropdown selection
+app.get("/api/freelancers/list", (req, res) => {
+    db.query("SELECT user_id, full_name, email FROM users WHERE role = 'freelancer'", (err, users) => {
+        if (err) return res.status(500).json({ message: "DB Error" });
+        res.json({ success: true, data: users });
+    });
+});
+
+// Manual Member Addition Route by ID
+app.post("/api/workspace/add-member", (req, res) => {
+    const { workspace_id, user_id } = req.body;
+    db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'member') ON DUPLICATE KEY UPDATE role='member'", [workspace_id, user_id], (err) => {
+        if (err) return res.status(500).json({ message: "Error adding member" });
+        res.json({ success: true, message: "Member added successfully!" });
+    });
+});
+
+// Initialize WebSocket Connection Logic
+io.on("connection", (socket) => {
+    console.log("New client connected", socket.id);
+
+    socket.on("join_workspace", (workspaceId) => {
+        socket.join(workspaceId);
+        console.log(`User ${socket.id} joined workspace: ${workspaceId}`);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected", socket.id);
+    });
+});
+
+const PORT = 1337;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

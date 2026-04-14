@@ -54,7 +54,11 @@ const MyProjects = () => {
             })
             .catch(err => console.log(err));
     };
+    const [search,setSearch] = useState("");
 
+    const filter = projects.filter((val)=>{
+        return val.title.toLowerCase().includes(search.toLowerCase()) || val.required_skills.toLowerCase().includes(search.toLowerCase())
+    })
     return (
         <DashboardLayout role="founder">
             <div className="MyProjects-scope">
@@ -72,14 +76,14 @@ const MyProjects = () => {
             </div>
 
             <div className="table-container">
-                <SearchBar placeholder="Search projects..." />
+                <SearchBar placeholder="Search projects..." value={search} onChange={(e)=>setSearch(e.target.value)} />
             </div>
 
             {/* PROJECT CARDS */}
 
             <div className="projects-grid">
 
-                {projects.map((val) => {
+                {filter.map((val) => {
 
                     const isExpanded = expanded[val.project_id];
                     const description = isExpanded
@@ -127,9 +131,18 @@ const MyProjects = () => {
                                 <strong>Duration:</strong> {val.duration_weeks} weeks
                             </p>
 
-                            <p className="project-team">
-                                <strong>Team Required:</strong> {val.team_members_required} freelancers
-                            </p>
+                            <div className="project-team" style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '15px 0' }}>
+                                <div style={{ flex: 1, background: '#e2e8f0', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ 
+                                        width: `${Math.min(((val.members_joined || 0) / (val.team_members_required || 1)) * 100, 100)}%`, 
+                                        background: val.members_joined >= val.team_members_required ? '#10b981' : '#6366f1', 
+                                        height: '100%', borderRadius: '4px', transition: 'width 0.3s ease' 
+                                    }}></div>
+                                </div>
+                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4b5563', whiteSpace: 'nowrap' }}>
+                                    {val.members_joined || 0} / {val.team_members_required} Members Joined
+                                </div>
+                            </div>
 
                             <p className="status-line">
                                <strong>Status:</strong>  <span className="status active">Active</span>
