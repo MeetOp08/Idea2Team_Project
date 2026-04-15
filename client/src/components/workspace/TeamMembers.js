@@ -38,6 +38,13 @@ const TeamMembers = ({ workspaceId, role }) => {
       e.preventDefault();
       if (!newMemberId) return alert("Please select a freelancer first");
       
+      // ✅ Check if member is already in workspace
+      const isAlreadyMember = members.some(m => m.user_id === parseInt(newMemberId));
+      if (isAlreadyMember) {
+          alert("This member is already added to the workspace!");
+          return;
+      }
+      
       try {
           const res = await axios.post("http://localhost:1337/api/workspace/add-member", {
               workspace_id: workspaceId,
@@ -84,9 +91,14 @@ const TeamMembers = ({ workspaceId, role }) => {
                       width: '100%', padding: '12px 15px', borderRadius: '8px', border: '1px solid var(--gray-300)', outline: 'none', background: 'white', cursor: 'pointer'
                   }}>
                       <option value="">Select a member from the platform...</option>
-                      {availableFreelancers.map(f => (
-                          <option key={f.user_id} value={f.user_id}>{f.full_name} ({f.email})</option>
-                      ))}
+                      {availableFreelancers.map(f => {
+                          const isAlreadyMember = members.some(m => m.user_id === f.user_id);
+                          return (
+                              <option key={f.user_id} value={f.user_id} disabled={isAlreadyMember}>
+                                  {f.full_name} ({f.email}) {isAlreadyMember ? '✅ Already added' : ''}
+                              </option>
+                          );
+                      })}
                   </select>
               </div>
               <button type="submit" style={{
@@ -115,8 +127,8 @@ const TeamMembers = ({ workspaceId, role }) => {
               {members.length === 0 ? (
                 <tr><td colSpan="4" className="text-center" style={{ padding: '40px' }}>No members found</td></tr>
               ) : null}
-              {members.map(member => (
-                <tr key={member.id} style={{ 
+              {members && members.length > 0 && members.map((member) => (
+                <tr key={member.workspace_member_id} style={{ 
                     background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.02)', transition: 'transform 0.2s ease', cursor: 'default'
                 }}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.01)'}

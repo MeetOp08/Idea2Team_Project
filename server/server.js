@@ -41,6 +41,26 @@ const db = mysql.createConnection({
   database: "idea2team",
 });
 
+const WORKSPACE_ROLES = ["owner", "admin", "member", "viewer"];
+
+const dbQuery = (query, params = []) =>
+  new Promise((resolve, reject) => {
+    db.query(query, params, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+
+const getMembershipRole = async (workspaceId, userId) => {
+  const rows = await dbQuery(
+    "SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ? LIMIT 1",
+    [workspaceId, userId],
+  );
+  return rows.length ? rows[0].role : null;
+};
+
+const isWorkspaceManager = (role) => role === "owner" || role === "admin";
+
 db.connect((err) => {
   if (err) {
     console.error("Connection Failed❌ and error is:", err);
@@ -239,35 +259,85 @@ app.post("/api/post-project", upload.single("upload_file"), (req, res) => {
     },
   );
 });
+// Check if freelancer has already applied to a project
+app.get("/api/check-application/:project_id/:freelancer_id", (req, res) => {
+  const { project_id, freelancer_id } = req.params;
+
+  const query = `
+    SELECT application_id, status FROM applications 
+    WHERE project_id = ? AND freelancer_id = ?
+  `;
+
+  db.query(query, [project_id, freelancer_id], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Error checking application status",
+        exists: false,
+      });
+    }
+
+    const applicationExists = result.length > 0;
+    res.json({
+      exists: applicationExists,
+      application: applicationExists ? result[0] : null,
+    });
+  });
+});
+
 app.post("/api/apply-project", (req, res) => {
   const { project_id, freelancer_id, proposal_message, expected_salary } =
     req.body;
 
   console.log(req.body);
 
-  const query = `
-    INSERT INTO applications
-    (project_id, freelancer_id, proposal_message, expected_salary)
-    VALUES (?,?,?,?)
-    `;
+  // Check if application already exists
+  const checkQuery = `
+    SELECT application_id FROM applications 
+    WHERE project_id = ? AND freelancer_id = ?
+  `;
 
-  db.query(
-    query,
-    [project_id, freelancer_id, proposal_message, expected_salary],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          message: "Error inserting application",
-        });
-      }
-
-      res.json({
-        success: true,
-        message: "Application submitted successfully",
+  db.query(checkQuery, [project_id, freelancer_id], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Error checking existing application",
       });
-    },
-  );
+    }
+
+    // If application already exists, reject
+    if (result.length > 0) {
+      return res.status(409).json({
+        message: "You have already applied to this project",
+        exists: true,
+      });
+    }
+
+    // Insert new application
+    const query = `
+      INSERT INTO applications
+      (project_id, freelancer_id, proposal_message, expected_salary)
+      VALUES (?,?,?,?)
+      `;
+
+    db.query(
+      query,
+      [project_id, freelancer_id, proposal_message, expected_salary],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({
+            message: "Error inserting application",
+          });
+        }
+
+        res.json({
+          success: true,
+          message: "Application submitted successfully",
+        });
+      },
+    );
+  });
 });
 
 // Skill normalization helper
@@ -1298,16 +1368,291 @@ app.get("/api/workspace/:id", (req, res) => {
 });
 
 app.get("/api/workspace/members/:id", (req, res) => {
-    const query = `
-        SELECT wm.id, wm.user_id, wm.role, wm.joined_at, u.full_name, u.email 
-        FROM workspace_members wm 
-        JOIN users u ON wm.user_id = u.user_id 
-        WHERE wm.workspace_id = ?
+    // Clean up duplicates first: keep only the earliest joined_at for each user
+    const cleanupQuery = `
+        DELETE FROM workspace_members 
+        WHERE id NOT IN (
+            SELECT MIN(id) FROM (
+                SELECT MIN(id) FROM workspace_members 
+                WHERE workspace_id = ? 
+                GROUP BY user_id
+            ) AS keep_ids
+        ) AND workspace_id = ?
     `;
-    db.query(query, [req.params.id], (err, results) => {
-        if (err) return res.status(500).json({ message: "Error fetching members" });
-        res.json({ success: true, data: results });
+    
+    db.query(cleanupQuery, [req.params.id, req.params.id], (err) => {
+        if (err) console.log("Cleanup error:", err);
+        
+        // Now fetch unique members - group by user_id to ensure no duplicates
+        const query = `
+            SELECT wm.id as workspace_member_id, wm.user_id, wm.role, wm.joined_at, u.full_name, u.email 
+            FROM workspace_members wm 
+            JOIN users u ON wm.user_id = u.user_id 
+            WHERE wm.workspace_id = ?
+            GROUP BY wm.user_id
+            ORDER BY MIN(wm.joined_at) DESC
+        `;
+        db.query(query, [req.params.id], (err, results) => {
+            if (err) return res.status(500).json({ message: "Error fetching members" });
+            res.json({ success: true, data: results });
+        });
     });
+});
+
+app.post("/api/workspace/:id/invite", async (req, res) => {
+  const workspaceId = Number(req.params.id);
+  const { email, role = "member", inviter_id } = req.body;
+  const normalizedRole = String(role).toLowerCase();
+
+  if (!workspaceId || !email || !inviter_id) {
+    return res.status(400).json({ message: "workspace id, email and inviter_id are required" });
+  }
+  if (!WORKSPACE_ROLES.includes(normalizedRole)) {
+    return res.status(400).json({ message: "Invalid role provided" });
+  }
+
+  try {
+    const inviterRole = await getMembershipRole(workspaceId, inviter_id);
+    if (!isWorkspaceManager(inviterRole)) {
+      return res.status(403).json({ message: "Only owner/admin can invite members" });
+    }
+
+    const users = await dbQuery("SELECT user_id, full_name, email FROM users WHERE email = ? LIMIT 1", [email.trim()]);
+    if (!users.length) {
+      return res.status(404).json({ message: "User with this email does not exist" });
+    }
+
+    const user = users[0];
+    const duplicateCheck = await dbQuery(
+      "SELECT id FROM workspace_members WHERE workspace_id = ? AND user_id = ? LIMIT 1",
+      [workspaceId, user.user_id],
+    );
+    if (duplicateCheck.length) {
+      return res.status(409).json({ message: "User is already a member of this workspace" });
+    }
+
+    const workspaces = await dbQuery(
+      `SELECT w.workspace_id, COALESCE(p.team_members_required, 10) AS team_capacity
+       FROM workspaces w
+       LEFT JOIN projects p ON p.project_id = w.project_id
+       WHERE w.workspace_id = ? LIMIT 1`,
+      [workspaceId],
+    );
+    if (!workspaces.length) {
+      return res.status(404).json({ message: "Workspace not found" });
+    }
+
+    const teamCapacity = Number(workspaces[0].team_capacity) || 10;
+    const joined = await dbQuery(
+      "SELECT COUNT(*) AS joined_count FROM workspace_members WHERE workspace_id = ?",
+      [workspaceId],
+    );
+    if (joined[0].joined_count >= teamCapacity) {
+      return res.status(400).json({ message: `Workspace capacity reached (${teamCapacity})` });
+    }
+
+    await dbQuery(
+      `INSERT INTO workspace_members (workspace_id, user_id, role, last_active)
+       VALUES (?, ?, ?, NOW())`,
+      [workspaceId, user.user_id, normalizedRole],
+    );
+
+    io.to(String(workspaceId)).emit("workspace_members_updated", {
+      workspace_id: workspaceId,
+      action: "invited",
+      user_id: user.user_id,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Member invited successfully",
+      email_invite: {
+        status: "mock_sent",
+        recipient: user.email,
+      },
+    });
+  } catch (error) {
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ message: "User is already a member of this workspace" });
+    }
+    console.error("Workspace invite error:", error);
+    return res.status(500).json({ message: "Failed to invite member" });
+  }
+});
+
+app.get("/api/workspace/:id/members", async (req, res) => {
+  const workspaceId = Number(req.params.id);
+  const { search = "", role = "", page = 1, limit = 10, requester_id } = req.query;
+
+  if (!workspaceId) {
+    return res.status(400).json({ message: "Invalid workspace id" });
+  }
+
+  const pageNumber = Math.max(Number(page) || 1, 1);
+  const limitNumber = Math.min(Math.max(Number(limit) || 10, 1), 50);
+  const offset = (pageNumber - 1) * limitNumber;
+
+  try {
+    const requesterRole = requester_id ? await getMembershipRole(workspaceId, requester_id) : null;
+    const canManage = isWorkspaceManager(requesterRole);
+
+    const filterValues = [workspaceId];
+    let whereClause = " WHERE wm.workspace_id = ?";
+
+    if (search.trim()) {
+      whereClause += " AND (u.full_name LIKE ? OR u.email LIKE ?)";
+      filterValues.push(`%${search.trim()}%`, `%${search.trim()}%`);
+    }
+    if (role && WORKSPACE_ROLES.includes(String(role).toLowerCase())) {
+      whereClause += " AND wm.role = ?";
+      filterValues.push(String(role).toLowerCase());
+    }
+
+    const members = await dbQuery(
+      `SELECT
+          wm.id,
+          wm.workspace_id,
+          wm.user_id,
+          wm.role,
+          wm.joined_at,
+          wm.last_active,
+          u.full_name,
+          u.email,
+          CASE
+            WHEN wm.last_active >= (NOW() - INTERVAL 2 MINUTE) THEN 'Online'
+            ELSE 'Offline'
+          END AS status
+       FROM workspace_members wm
+       JOIN users u ON u.user_id = wm.user_id
+       ${whereClause}
+       ORDER BY wm.joined_at DESC
+       LIMIT ? OFFSET ?`,
+      [...filterValues, limitNumber, offset],
+    );
+
+    const totalResult = await dbQuery(
+      `SELECT COUNT(*) AS total FROM workspace_members wm
+       JOIN users u ON u.user_id = wm.user_id
+       ${whereClause}`,
+      filterValues,
+    );
+
+    const capacityRows = await dbQuery(
+      `SELECT COALESCE(p.team_members_required, 10) AS team_capacity
+       FROM workspaces w
+       LEFT JOIN projects p ON p.project_id = w.project_id
+       WHERE w.workspace_id = ?
+       LIMIT 1`,
+      [workspaceId],
+    );
+    const totalJoinedRows = await dbQuery(
+      "SELECT COUNT(*) AS joined_count FROM workspace_members WHERE workspace_id = ?",
+      [workspaceId],
+    );
+
+    return res.json({
+      success: true,
+      data: members,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        total: totalResult[0].total,
+        totalPages: Math.ceil(totalResult[0].total / limitNumber),
+      },
+      summary: {
+        joined: totalJoinedRows[0].joined_count,
+        capacity: Number(capacityRows[0]?.team_capacity) || 10,
+      },
+      permissions: {
+        requester_role: requesterRole,
+        can_manage: canManage,
+      },
+    });
+  } catch (error) {
+    console.error("Get workspace members error:", error);
+    return res.status(500).json({ message: "Failed to fetch workspace members" });
+  }
+});
+
+app.put("/api/workspace/member/:id/role", async (req, res) => {
+  const membershipId = Number(req.params.id);
+  const { role, requester_id } = req.body;
+  const normalizedRole = String(role || "").toLowerCase();
+
+  if (!membershipId || !requester_id || !WORKSPACE_ROLES.includes(normalizedRole)) {
+    return res.status(400).json({ message: "membership id, requester_id and valid role are required" });
+  }
+
+  try {
+    const memberRows = await dbQuery(
+      "SELECT id, workspace_id, user_id, role FROM workspace_members WHERE id = ? LIMIT 1",
+      [membershipId],
+    );
+    if (!memberRows.length) {
+      return res.status(404).json({ message: "Workspace member not found" });
+    }
+
+    const member = memberRows[0];
+    const requesterRole = await getMembershipRole(member.workspace_id, requester_id);
+    if (!isWorkspaceManager(requesterRole)) {
+      return res.status(403).json({ message: "Only owner/admin can change member roles" });
+    }
+
+    await dbQuery("UPDATE workspace_members SET role = ? WHERE id = ?", [normalizedRole, membershipId]);
+
+    io.to(String(member.workspace_id)).emit("workspace_members_updated", {
+      workspace_id: member.workspace_id,
+      action: "role_changed",
+      member_id: membershipId,
+      role: normalizedRole,
+    });
+
+    return res.json({ success: true, message: "Member role updated" });
+  } catch (error) {
+    console.error("Update member role error:", error);
+    return res.status(500).json({ message: "Failed to update role" });
+  }
+});
+
+app.delete("/api/workspace/member/:id", async (req, res) => {
+  const membershipId = Number(req.params.id);
+  const requesterId = req.body.requester_id || req.query.requester_id;
+
+  if (!membershipId || !requesterId) {
+    return res.status(400).json({ message: "membership id and requester_id are required" });
+  }
+
+  try {
+    const memberRows = await dbQuery(
+      "SELECT id, workspace_id, user_id, role FROM workspace_members WHERE id = ? LIMIT 1",
+      [membershipId],
+    );
+    if (!memberRows.length) {
+      return res.status(404).json({ message: "Workspace member not found" });
+    }
+    const member = memberRows[0];
+    const requesterRole = await getMembershipRole(member.workspace_id, requesterId);
+    if (!isWorkspaceManager(requesterRole)) {
+      return res.status(403).json({ message: "Only owner/admin can remove members" });
+    }
+    if (member.role === "owner") {
+      return res.status(400).json({ message: "Owner cannot be removed from workspace" });
+    }
+
+    await dbQuery("DELETE FROM workspace_members WHERE id = ?", [membershipId]);
+
+    io.to(String(member.workspace_id)).emit("workspace_members_updated", {
+      workspace_id: member.workspace_id,
+      action: "removed",
+      member_id: membershipId,
+      user_id: member.user_id,
+    });
+
+    return res.json({ success: true, message: "Member removed successfully" });
+  } catch (error) {
+    console.error("Remove member error:", error);
+    return res.status(500).json({ message: "Failed to remove member" });
+  }
 });
 
 app.post("/api/tasks/create", (req, res) => {
@@ -1469,10 +1814,29 @@ app.get("/api/freelancers/list", (req, res) => {
 // Manual Member Addition Route by ID
 app.post("/api/workspace/add-member", (req, res) => {
     const { workspace_id, user_id } = req.body;
-    db.query("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'member') ON DUPLICATE KEY UPDATE role='member'", [workspace_id, user_id], (err) => {
-        if (err) return res.status(500).json({ message: "Error adding member" });
-        res.json({ success: true, message: "Member added successfully!" });
-    });
+    
+    // ✅ Check if member already exists in workspace
+    db.query(
+        "SELECT id FROM workspace_members WHERE workspace_id = ? AND user_id = ? LIMIT 1",
+        [workspace_id, user_id],
+        (err, existing) => {
+            if (err) return res.status(500).json({ success: false, message: "Error checking member" });
+            
+            if (existing && existing.length > 0) {
+                return res.status(400).json({ success: false, message: "This user is already a member of this workspace!" });
+            }
+            
+            // Add new member
+            db.query(
+                "INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'member')",
+                [workspace_id, user_id],
+                (err) => {
+                    if (err) return res.status(500).json({ success: false, message: "Error adding member" });
+                    res.json({ success: true, message: "Member added successfully!" });
+                }
+            );
+        }
+    );
 });
 
 // Initialize WebSocket Connection Logic
@@ -1480,14 +1844,32 @@ io.on("connection", (socket) => {
     console.log("New client connected", socket.id);
 
     socket.on("join_workspace", (workspaceId) => {
-        socket.join(workspaceId);
+        socket.join(String(workspaceId));
         console.log(`User ${socket.id} joined workspace: ${workspaceId}`);
+    });
+
+    socket.on("workspace_presence_ping", ({ workspace_id, user_id }) => {
+      if (!workspace_id || !user_id) return;
+      db.query(
+        "UPDATE workspace_members SET last_active = NOW() WHERE workspace_id = ? AND user_id = ?",
+        [workspace_id, user_id],
+        (err) => {
+          if (!err) {
+            io.to(String(workspace_id)).emit("workspace_presence_updated", {
+              workspace_id,
+              user_id,
+              status: "Online",
+            });
+          }
+        },
+      );
     });
 
     socket.on("disconnect", () => {
         console.log("Client disconnected", socket.id);
     });
 });
+
 
 const PORT = 1337;
 server.listen(PORT, () => {

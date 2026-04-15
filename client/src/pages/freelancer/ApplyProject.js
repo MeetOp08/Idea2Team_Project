@@ -12,6 +12,9 @@ function ApplyProject(){
     proposal_message:"",
     expected_salary:"",
   });
+  const[hasApplied, setHasApplied] = useState(false);
+  const[existingApplication, setExistingApplication] = useState(null);
+
   const handleChange=(e)=>{
 
     setformData({
@@ -46,7 +49,14 @@ const handleSubmit = () => {
 
   navigate("/freelancer/browse"); // redirect
 })
-  .catch(err=>console.log(err));
+  .catch(err=>{
+    if(err.response?.status === 409){
+      alert(err.response.data.message || "You have already applied to this project");
+    } else {
+      console.log(err);
+      alert("Error submitting application");
+    }
+  });
 
 };
   useEffect(()=>{
@@ -57,6 +67,19 @@ const handleSubmit = () => {
         setProject(res.data.data)})
     .catch(err=>console.log(err))
   },[id])
+
+  useEffect(() => {
+    const freelancer_id = sessionStorage.getItem("user_id");
+    if (!freelancer_id) return;
+
+    // Check if freelancer has already applied to this project
+    axios.get(`http://localhost:1337/api/check-application/${id}/${freelancer_id}`)
+      .then(res => {
+        setHasApplied(res.data.exists);
+        setExistingApplication(res.data.application);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
 
 return(
 <DashboardLayout role="freelancer">
@@ -152,13 +175,29 @@ placeholder="Enter your price"
 
 <div className="apply-actions">
 
-<button className="btn btn-secondary">
+<button className="btn btn-secondary" onClick={() => navigate("/freelancer/browse")}>
 Cancel
 </button>
 
-<button className="btn btn-primary" onClick={handleSubmit}>
-Submit Application
-</button>
+{hasApplied ? (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '10px 15px',
+    backgroundColor: '#fef2f2',
+    border: '1px solid #fecaca',
+    borderRadius: '6px',
+    color: '#991b1b',
+    fontWeight: '500'
+  }}>
+    ✓ Already Applied ({existingApplication?.status || 'Pending'})
+  </div>
+) : (
+  <button className="btn btn-primary" onClick={handleSubmit}>
+    Submit Application
+  </button>
+)}
 
 </div>
 
