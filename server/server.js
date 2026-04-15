@@ -1311,10 +1311,10 @@ app.get("/api/workspace/members/:id", (req, res) => {
 });
 
 app.post("/api/tasks/create", (req, res) => {
-    const { workspace_id, title, description, assigned_to, deadline } = req.body;
+    const { workspace_id, title, description, assignee_id, due_date } = req.body;
     db.query(
-        "INSERT INTO tasks (workspace_id, title, description, assigned_to, deadline) VALUES (?, ?, ?, ?, ?)",
-        [workspace_id, title, description, assigned_to, deadline],
+        "INSERT INTO tasks (workspace_id, title, description, assignee_id, due_date) VALUES (?, ?, ?, ?, ?)",
+        [workspace_id, title, description, assignee_id, due_date],
         (err) => {
             if (err) return res.status(500).json({ message: "Error creating task" });
             res.status(201).json({ success: true, message: "Task created" });
@@ -1324,9 +1324,9 @@ app.post("/api/tasks/create", (req, res) => {
 
 app.get("/api/tasks/:workspace_id", (req, res) => {
     db.query(`
-        SELECT t.*, u.full_name as assigned_to_name 
+        SELECT t.task_id as id, t.*, u.full_name as assignee_name 
         FROM tasks t 
-        LEFT JOIN users u ON t.assigned_to = u.user_id 
+        LEFT JOIN users u ON t.assignee_id = u.user_id 
         WHERE t.workspace_id = ?
     `, [req.params.workspace_id], (err, results) => {
         if (err) return res.status(500).json({ message: "Error fetching tasks" });
@@ -1336,7 +1336,7 @@ app.get("/api/tasks/:workspace_id", (req, res) => {
 
 app.put("/api/tasks/update-status", (req, res) => {
     const { task_id, status } = req.body;
-    db.query("UPDATE tasks SET status = ? WHERE id = ?", [status, task_id], (err) => {
+    db.query("UPDATE tasks SET status = ? WHERE task_id = ?", [status, task_id], (err) => {
         if (err) return res.status(500).json({ message: "Error updating task" });
         res.json({ success: true, message: "Status updated" });
     });

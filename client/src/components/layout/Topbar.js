@@ -37,14 +37,7 @@ const Topbar = ({ collapsed = false }) => {
       {/* RIGHT */}
       <div className="topbar-right">
 
-        <button className="topbar-btn">
-          🔔
-          <span className="topbar-dot"></span>
-        </button>
-
-        <button className="topbar-btn">
-          💬
-        </button>
+      
 
         <button className="topbar-logout" onClick={handleLogout}>
           Logout

@@ -36,7 +36,7 @@
 
 .card:hover {
   transform: translateY(-4px);
-  border-color: #3b82f6;
+  
 }
 
 /* TEXT */
@@ -52,10 +52,21 @@
 }
 
 /* LEFT BORDER COLORS (SAME AS FREELANCER) */
-.card.blue { border-left: 4px solid #3b82f6; }
-.card.green { border-left: 4px solid #22c55e; }
-.card.purple { border-left: 4px solid #8b5cf6; }
-.card.orange { border-left: 4px solid #f59e0b; }
+.card.blue {
+  border-left: 4px solid #3b82f6;
+}
+
+.card.green {
+  border-left: 4px solid #22c55e;
+}
+
+.card.purple {
+  border-left: 4px solid #8b5cf6;
+}
+
+.card.orange {
+  border-left: 4px solid #f59e0b;
+}
 
 /* ================= QUICK ACTIONS ================= */
 .quick-actions {
@@ -88,10 +99,14 @@
   background: #ffffff;
 }
 
+.quick-card.primary:hover {
+  background: linear-gradient(136deg, rgba(0, 0, 255, 0.432), white);
+}
+
 /* SAME HOVER AS FREELANCER */
 .quick-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(59,130,246,0.15);
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.15);
   border-color: #3b82f6;
 }
 

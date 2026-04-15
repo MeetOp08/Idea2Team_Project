@@ -144,8 +144,16 @@ const FounderProfile = () => {
                             <input
                                 id="avatar-upload"
                                 type="file"
-                                accept="image/*"
-                                onChange={handleImageChange}
+                                accept="image/jpeg, image/png, image/webp, image/gif"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file && (file.type === "image/heic" || file.name.toLowerCase().endsWith(".heic"))) {
+                                        Swal.fire("Error", "HEIC format is not supported by browsers. Please upload a JPG or PNG.", "error");
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    handleImageChange(e);
+                                }}
                                 style={{ display: 'none' }}
                             />
                         </div>

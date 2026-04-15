@@ -63,7 +63,7 @@
 
 .card:hover {
   transform: translateY(-4px);
-  border-color: var(--primary);
+ 
 }
 
 /* ICON TOP RIGHT */
@@ -138,6 +138,9 @@
 .quick-card p {
   font-size: 13px;
   color: var(--subtext);
+}
+.quick-card:hover{
+  background: linear-gradient(136deg,rgba(0, 0, 255, 0.432),white);
 }
 
 /* ================= RECENT PROJECTS ================= */

@@ -81,7 +81,7 @@ const WorkspaceApp = ({ role }) => {
 
                 <nav className="sidebar-nav">
                     <button className={`nav-glass-btn ${activeTab === 'tasks' ? 'active' : ''}`} onClick={() => setActiveTab('tasks')}>
-                        <span className="nav-icon">📋</span> Kanban Board
+                        <span className="nav-icon">📋</span> Task Process
                     </button>
                     <button className={`nav-glass-btn ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>
                         <span className="nav-icon">💬</span> Team Chat
