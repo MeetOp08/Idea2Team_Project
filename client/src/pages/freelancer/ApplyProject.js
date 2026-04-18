@@ -30,6 +30,16 @@ const handleSubmit = () => {
     return;
   }
 
+  // Frontend deadline check
+  if (project.application_deadline) {
+    const deadline = new Date(project.application_deadline);
+    deadline.setHours(23, 59, 59, 999);
+    if (new Date() > deadline) {
+      alert("Applications for this project are closed.");
+      return;
+    }
+  }
+
   const freelancer_id = sessionStorage.getItem("user_id");
 
   const applicationData = {
@@ -52,6 +62,8 @@ const handleSubmit = () => {
   .catch(err=>{
     if(err.response?.status === 409){
       alert(err.response.data.message || "You have already applied to this project");
+    } else if(err.response?.status === 403){
+      alert(err.response.data.message || "Applications for this project are closed.");
     } else {
       console.log(err);
       alert("Error submitting application");
@@ -128,6 +140,22 @@ return(
 {project?.duration_weeks} weeks
 </span>
 </div>
+
+{project?.application_deadline && (
+<div className="info-item">
+<span className="info-label">📅 Apply By</span>
+<span className="info-value" style={{
+  color: new Date() > new Date(new Date(project.application_deadline).setHours(23,59,59,999)) ? '#dc2626' : '#166534',
+  fontWeight: 600
+}}>
+{new Date(project.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+{new Date() > new Date(new Date(project.application_deadline).setHours(23,59,59,999)) ? ' (Closed)' : ''}
+</span>
+</div>
+)}
+
+
+
 
 </div>
 

@@ -124,6 +124,30 @@ const BrowseProjects = () => {
                                     <strong>Duration:</strong> {val.duration_weeks} weeks
                                 </p>
 
+                                {/* Deadline Info */}
+                                {val.application_deadline && (() => {
+                                    const deadlineDate = new Date(val.application_deadline);
+                                    deadlineDate.setHours(23, 59, 59, 999);
+                                    const now = new Date();
+                                    const daysLeft = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
+                                    const isPast = now > deadlineDate;
+                                    return (
+                                        <p className="project-deadline" style={{
+                                            display: 'flex', alignItems: 'center', gap: '6px',
+                                            padding: '8px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600,
+                                            background: isPast ? '#fef2f2' : daysLeft <= 3 ? '#fffbeb' : '#f0fdf4',
+                                            color: isPast ? '#991b1b' : daysLeft <= 3 ? '#92400e' : '#166534',
+                                            margin: '10px 0'
+                                        }}>
+                                            📅 Apply by: {deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            {isPast ? ' — Closed' : ` — ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`}
+                                        </p>
+                                    );
+                                })()}
+
+
+
+
                                 <div className="project-team" style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '15px 0' }}>
                                     <div style={{ flex: 1, background: '#e2e8f0', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
                                         <div style={{ 
@@ -142,23 +166,28 @@ const BrowseProjects = () => {
                                 </div>
 
                                 <div className="project-actions">
-                                    {appliedProjects.includes(val.project_id) ? (
-                                        <button
-                                            className="edit-btn"
-                                            style={{ width: '100%', background: '#9ca3af', borderColor: '#9ca3af', cursor: 'not-allowed', color: 'white' }}
-                                            disabled
-                                        >
-                                            Already Applied
-                                        </button>
-                                    ) : (
-                                        <button
-                                            className="edit-btn"
-                                            style={{ width: '100%' }}
-                                            onClick={() => handleApply(val.project_id)}
-                                        >
-                                            Apply Now
-                                        </button>
-                                    )}
+                                    {(() => {
+                                        const deadlinePassed = val.application_deadline && new Date() > new Date(new Date(val.application_deadline).setHours(23, 59, 59, 999));
+                                        if (appliedProjects.includes(val.project_id)) {
+                                            return (
+                                                <button className="edit-btn" style={{ width: '100%', background: '#9ca3af', borderColor: '#9ca3af', cursor: 'not-allowed', color: 'white' }} disabled>
+                                                    Already Applied
+                                                </button>
+                                            );
+                                        } else if (deadlinePassed) {
+                                            return (
+                                                <button className="edit-btn" style={{ width: '100%', background: '#ef4444', borderColor: '#ef4444', cursor: 'not-allowed', color: 'white' }} disabled>
+                                                    🔒 Applications Closed
+                                                </button>
+                                            );
+                                        } else {
+                                            return (
+                                                <button className="edit-btn" style={{ width: '100%' }} onClick={() => handleApply(val.project_id)}>
+                                                    Apply Now
+                                                </button>
+                                            );
+                                        }
+                                    })()}
                                 </div>
                             </div>
                         );

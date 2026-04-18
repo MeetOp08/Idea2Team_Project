@@ -276,14 +276,17 @@ app.post("/api/post-project", upload.single("upload_file"), (req, res) => {
     budget_max,
     duration_weeks,
     team_members_required,
+    application_deadline,
+    completion_deadline,
   } = req.body;
   const upload_file = req.file ? req.file.filename : null;
   const sql = `
         INSERT INTO projects
         (founder_id,title,description,category,required_skills,
         project_stage,collaboration_type,experience_level,
-        budget_min,budget_max,duration_weeks,team_members_required,upload_file)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+        budget_min,budget_max,duration_weeks,team_members_required,upload_file,
+        application_deadline,completion_deadline)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `;
 
   db.query(
@@ -302,6 +305,8 @@ app.post("/api/post-project", upload.single("upload_file"), (req, res) => {
       duration_weeks,
       team_members_required,
       upload_file,
+      application_deadline || null,
+      completion_deadline || null,
     ],
     (err, result) => {
       if (err) {
@@ -345,52 +350,70 @@ app.post("/api/apply-project", (req, res) => {
 
   console.log(req.body);
 
-  // Check if application already exists
-  const checkQuery = `
-    SELECT application_id FROM applications 
-    WHERE project_id = ? AND freelancer_id = ?
-  `;
-
-  db.query(checkQuery, [project_id, freelancer_id], (err, result) => {
+  // First check if the application deadline has passed
+  const deadlineQuery = `SELECT application_deadline FROM projects WHERE project_id = ?`;
+  db.query(deadlineQuery, [project_id], (err, projectResult) => {
     if (err) {
       console.log(err);
-      return res.status(500).json({
-        message: "Error checking existing application",
-      });
+      return res.status(500).json({ message: "Error checking project deadline" });
     }
-
-    // If application already exists, reject
-    if (result.length > 0) {
-      return res.status(409).json({
-        message: "You have already applied to this project",
-        exists: true,
-      });
-    }
-
-    // Insert new application
-    const query = `
-      INSERT INTO applications
-      (project_id, freelancer_id, proposal_message, expected_salary)
-      VALUES (?,?,?,?)
-      `;
-
-    db.query(
-      query,
-      [project_id, freelancer_id, proposal_message, expected_salary],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: "Error inserting application",
-          });
-        }
-
-        res.json({
-          success: true,
-          message: "Application submitted successfully",
+    if (projectResult.length > 0 && projectResult[0].application_deadline) {
+      const deadline = new Date(projectResult[0].application_deadline);
+      deadline.setHours(23, 59, 59, 999); // end of deadline day
+      if (new Date() > deadline) {
+        return res.status(403).json({
+          message: "Applications for this project are closed. The deadline was " + deadline.toLocaleDateString(),
         });
-      },
-    );
+      }
+    }
+
+    // Check if application already exists
+    const checkQuery = `
+      SELECT application_id FROM applications 
+      WHERE project_id = ? AND freelancer_id = ?
+    `;
+
+    db.query(checkQuery, [project_id, freelancer_id], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          message: "Error checking existing application",
+        });
+      }
+
+      // If application already exists, reject
+      if (result.length > 0) {
+        return res.status(409).json({
+          message: "You have already applied to this project",
+          exists: true,
+        });
+      }
+
+      // Insert new application
+      const query = `
+        INSERT INTO applications
+        (project_id, freelancer_id, proposal_message, expected_salary)
+        VALUES (?,?,?,?)
+        `;
+
+      db.query(
+        query,
+        [project_id, freelancer_id, proposal_message, expected_salary],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({
+              message: "Error inserting application",
+            });
+          }
+
+          res.json({
+            success: true,
+            message: "Application submitted successfully",
+          });
+        },
+      );
+    });
   });
 });
 
@@ -810,6 +833,113 @@ app.get("/api/admin/recent-activity", (req, res) => {
     });
   });
 });
+
+app.get("/api/admin/reports-data", (req, res) => {
+  const period = req.query.period || 'daily';
+  
+  let interval;
+  let dateFormat; 
+  if (period === 'daily') {
+    interval = '7 DAY';
+  } else if (period === 'weekly') {
+    interval = '4 WEEK';
+  } else if (period === 'monthly') {
+    interval = '6 MONTH';
+  }
+
+  const pQuery = `SELECT created_at, status FROM projects WHERE created_at >= DATE_SUB(NOW(), INTERVAL ${interval})`;
+  const aQuery = `SELECT applied_at FROM applications WHERE applied_at >= DATE_SUB(NOW(), INTERVAL ${interval})`;
+  const uQuery = `SELECT created_at FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL ${interval})`;
+
+  db.query(pQuery, (err, pResults) => {
+    if (err) return res.status(500).json({ message: "Error fetching project data" });
+    db.query(aQuery, (err, aResults) => {
+      if (err) return res.status(500).json({ message: "Error fetching applications" });
+      db.query(uQuery, (err, uResults) => {
+        if (err) return res.status(500).json({ message: "Error fetching users" });
+        
+        const grouped = {};
+        
+        const formatLabel = (dateStr) => {
+            const d = new Date(dateStr);
+            if (period === 'daily') {
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            } else if (period === 'weekly') {
+                const weekNum = Math.ceil(d.getDate() / 7);
+                return `${d.toLocaleDateString('en-US', { month: 'short' })} W${weekNum}`;
+            } else {
+                return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            }
+        };
+
+        const initializeLabels = () => {
+             const labels = [];
+             const now = new Date();
+             if (period === 'daily') {
+                 for(let i=6; i>=0; i--) {
+                     const d = new Date(now);
+                     d.setDate(d.getDate() - i);
+                     labels.push(formatLabel(d));
+                 }
+             } else if (period === 'weekly') {
+                 for(let i=3; i>=0; i--) {
+                     const d = new Date(now);
+                     d.setDate(d.getDate() - (i*7));
+                     const label = formatLabel(d);
+                     if(!labels.includes(label)) labels.push(label);
+                 }
+             } else if (period === 'monthly') {
+                 for(let i=5; i>=0; i--) {
+                     const d = new Date(now);
+                     d.setMonth(d.getMonth() - i);
+                     labels.push(formatLabel(d));
+                 }
+             }
+             return labels;
+        };
+
+        const labels = initializeLabels();
+        labels.forEach(l => {
+           grouped[l] = { published: 0, closed: 0, applications: 0, users: 0 };
+        });
+
+        pResults.forEach(p => {
+           const l = formatLabel(p.created_at);
+           if (grouped[l]) {
+               grouped[l].published += 1;
+               if (p.status === 'closed') {
+                   grouped[l].closed += 1;
+               }
+           }
+        });
+
+        aResults.forEach(a => {
+           const l = formatLabel(a.applied_at);
+           if (grouped[l]) grouped[l].applications += 1;
+        });
+
+        uResults.forEach(u => {
+           const l = formatLabel(u.created_at);
+           if (grouped[l]) grouped[l].users += 1;
+        });
+
+        const finalData = {
+           labels: Object.keys(grouped),
+           published: Object.keys(grouped).map(k => grouped[k].published),
+           closed: Object.keys(grouped).map(k => grouped[k].closed),
+           applications: Object.keys(grouped).map(k => grouped[k].applications),
+           users: Object.keys(grouped).map(k => grouped[k].users),
+        };
+
+        res.json({
+            success: true,
+            data: finalData
+        });
+      });
+    });
+  });
+});
+
 app.get("/api/founder/dashboard/recent-freelancer/:id", (req, res) => {
   const id = req.params.id;
 
@@ -893,6 +1023,8 @@ app.put("/api/founder/edit-project/:id", (req, res) => {
     budget_max,
     duration_weeks,
     team_members_required,
+    application_deadline,
+    completion_deadline,
   } = req.body;
 
   const query = `
@@ -903,7 +1035,9 @@ app.put("/api/founder/edit-project/:id", (req, res) => {
             budget_min = ?,
             budget_max = ?,
             duration_weeks = ?,
-            team_members_required = ?
+            team_members_required = ?,
+            application_deadline = ?,
+            completion_deadline = ?
         WHERE project_id = ?
     `;
 
@@ -917,6 +1051,8 @@ app.put("/api/founder/edit-project/:id", (req, res) => {
       budget_max,
       duration_weeks,
       team_members_required,
+      application_deadline || null,
+      completion_deadline || null,
       projectId,
     ],
     (err) => {

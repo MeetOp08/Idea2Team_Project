@@ -68,7 +68,7 @@ function cleanSkills(skills) {
     const title = document.querySelector("#title").value;
     const description = document.querySelector("#description").value;
     const category = document.querySelector("#category").value;
-    const rawSkills = document.querySelector("#required_skills").value;
+    const rawSkills = skills.join(",");
     const required_skills = cleanSkills(rawSkills);
     const project_stage = document.querySelector("#project_stage").value;
     const collaboration_type = document.querySelector("#collaboration_type").value;
@@ -78,6 +78,11 @@ function cleanSkills(skills) {
     const duration_weeks = document.querySelector("#duration_weeks").value;
     const team_members_required = document.querySelector("#team_members_required").value;
     const upload_file = document.querySelector("#upload_file").files[0];
+
+    // Default application deadline = 7 days from today
+    const defaultDeadline = new Date();
+    defaultDeadline.setDate(defaultDeadline.getDate() + 7);
+    const application_deadline = defaultDeadline.toISOString().split('T')[0];
 
     // ✅ Validation
     if (!founder_id || !title || !description || !category || !required_skills || !project_stage || !budget_min || !budget_max || !duration_weeks) {
@@ -104,6 +109,7 @@ function cleanSkills(skills) {
     formData.append("budget_max", budget_max);
     formData.append("duration_weeks", duration_weeks);
     formData.append("team_members_required", team_members_required);
+    formData.append("application_deadline", application_deadline);
 
     if (upload_file) {
         formData.append("upload_file", upload_file);
@@ -211,11 +217,11 @@ function cleanSkills(skills) {
                     </div>
 
 
-                    {/* BUDGET */}
+                    {/* BUDGET & DEADLINES */}
 
                     <div className="pp-section">
 
-                        <h3 className="pp-section-title">💰 Budget</h3>
+                        <h3 className="pp-section-title">💰 Budget & Timeline</h3>
 
                         <div className="pp-grid-3">
 

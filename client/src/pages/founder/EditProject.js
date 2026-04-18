@@ -17,7 +17,9 @@ const EditProject = () => {
         budget_min: "",
         budget_max: "",
         duration_weeks: "",
-        team_members_required: ""
+        team_members_required: "",
+        application_deadline: "",
+        completion_deadline: ""
     });
 
     // ✅ Load Project
@@ -118,6 +120,14 @@ const EditProject = () => {
     value={form.team_members_required}
     onChange={handleChange}
     type="number"
+/>
+
+<label>📅 Application Deadline</label>
+<input
+    name="application_deadline"
+    value={form.application_deadline ? form.application_deadline.split('T')[0] : ''}
+    onChange={handleChange}
+    type="date"
 />
 
 <button className="update-btn" onClick={handleUpdate}>
